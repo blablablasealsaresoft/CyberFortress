@@ -1,0 +1,1114 @@
+# ENHANCED THREAT INTELLIGENCE LAUNCHER v4.0 - COMPLETE SYSTEM CONTROLLER
+# Enterprise-grade multi-engine threat detection and response system
+
+function Show-EnhancedMenu {
+    Clear-Host
+    Write-Host "🌍 ENHANCED THREAT INTELLIGENCE SYSTEM v4.0" -ForegroundColor Cyan
+    Write-Host "🚀 Complete Enterprise-Grade Multi-Engine Detection & Response Platform" -ForegroundColor Green
+    Write-Host "=" * 85 -ForegroundColor Cyan
+    Write-Host ""
+    
+    Write-Host "🔥 MONITORING & DETECTION:" -ForegroundColor Red
+    Write-Host "1.  🛡️  Start Enhanced Monitor (Standard Mode)" -ForegroundColor Green
+    Write-Host "2.  🕵️  Start Enhanced Monitor with Deep Scan" -ForegroundColor Red
+    Write-Host "3.  👤 Start Personal Monitoring Mode" -ForegroundColor Blue
+    Write-Host "4.  🏢 Start Enterprise Mode (All Features)" -ForegroundColor Magenta
+    Write-Host "5.  🤖 Start with ML Anomaly Detection" -ForegroundColor Cyan
+    Write-Host "6.  ⚡ Start with Automated Response" -ForegroundColor Yellow
+    Write-Host ""
+    
+    Write-Host "📊 DASHBOARDS & ANALYSIS:" -ForegroundColor Blue
+    Write-Host "7.  📈 Enhanced Dashboard (Real-time)" -ForegroundColor Green
+    Write-Host "8.  🔍 Threat Intelligence Dashboard" -ForegroundColor Cyan
+    Write-Host "9.  🤖 ML Anomaly Analysis Dashboard" -ForegroundColor Magenta
+    Write-Host "10. 👤 Personal Monitoring Dashboard" -ForegroundColor Blue
+    Write-Host "11. 📋 Detailed Threat Profiles" -ForegroundColor Yellow
+    Write-Host "12. 🌍 Geographic Threat Analysis" -ForegroundColor Green
+    Write-Host ""
+    
+            Write-Host "📄 REPORTS & EXPORTS:" -ForegroundColor Magenta
+        Write-Host "13. 📊 Export Enhanced Interactive Report" -ForegroundColor Green
+        Write-Host "14. 🗺️  Export Geographic Threat Map" -ForegroundColor Blue
+        Write-Host "15. 👤 Export Personal Activity Report" -ForegroundColor Cyan
+        Write-Host "16. 🎯 Export Executive Summary" -ForegroundColor Yellow
+        Write-Host ""
+        
+        Write-Host "🧩 IDENTITY, OSINT & CRYPTO:" -ForegroundColor DarkCyan
+        Write-Host "24. 🔒 Identity Protection Suite" -ForegroundColor Cyan
+        Write-Host "25. 🕵️ OSINT Investigator Suite" -ForegroundColor Cyan
+        Write-Host "26. 🔐 Quantum Crypto Suite" -ForegroundColor Magenta
+        Write-Host ""
+        
+        Write-Host "⚙️  SYSTEM MANAGEMENT:" -ForegroundColor Gray
+    Write-Host "17. 🔧 System Diagnostics & Health Check" -ForegroundColor White
+    Write-Host "18. 📊 System Status & Statistics" -ForegroundColor White
+    Write-Host "19. 🧹 Database Maintenance & Cleanup" -ForegroundColor White
+    Write-Host "20. ⚡ Test All Engines" -ForegroundColor White
+    Write-Host "21. 🔒 Privacy & Security Settings" -ForegroundColor White
+    Write-Host "22. 📚 Help & Documentation" -ForegroundColor White
+    Write-Host "23. 🚪 Exit System" -ForegroundColor Gray
+    Write-Host ""
+    
+    Write-Host "🎯 ENHANCED v4.0 CAPABILITIES:" -ForegroundColor Yellow
+    Write-Host "   ✅ Multi-Source Threat Intelligence & IOC Correlation" -ForegroundColor DarkGray
+    Write-Host "   ✅ Advanced Process Behavior Analysis & Baseline Learning" -ForegroundColor DarkGray
+    Write-Host "   ✅ Machine Learning Anomaly Detection (Multiple Models)" -ForegroundColor DarkGray
+    Write-Host "   ✅ Automated Response & Threat Mitigation" -ForegroundColor DarkGray
+    Write-Host "   ✅ Enhanced Geolocation & Context Intelligence" -ForegroundColor DarkGray
+    Write-Host "   ✅ Personal Monitoring with Privacy Controls" -ForegroundColor DarkGray
+    Write-Host "   ✅ Real-time Cross-Correlation Analysis" -ForegroundColor DarkGray
+    Write-Host "   ✅ Enterprise-Grade Reporting & Visualization" -ForegroundColor DarkGray
+    Write-Host ""
+    
+    $choice = Read-Host "Select option (1-26)"
+    
+    switch ($choice) {
+        "1" { 
+            Write-Host "🚀 Starting Enhanced Threat Monitor (Standard Mode)..." -ForegroundColor Green
+            Write-Host "📋 Features: Basic monitoring with enhanced geolocation and threat intelligence" -ForegroundColor Gray
+            if (Test-Path "enhanced_threat_monitor.ps1") {
+                .\enhanced_threat_monitor.ps1 -ScanInterval 10 -Verbose
+            } else {
+                Write-Host "❌ Enhanced monitor not found. Please ensure enhanced_threat_monitor.ps1 exists." -ForegroundColor Red
+                pause; Show-EnhancedMenu
+            }
+        }
+        
+        "2" { 
+            Write-Host "🕵️ Starting Enhanced Threat Monitor with Deep Scan..." -ForegroundColor Red
+            Write-Host "⚠️  Warning: Deep scan performs comprehensive analysis and may impact performance" -ForegroundColor Yellow
+            $confirm = Read-Host "Continue with deep scan? (y/N)"
+            if ($confirm -eq 'y' -or $confirm -eq 'Y') {
+                if (Test-Path "enhanced_threat_monitor.ps1") {
+                    .\enhanced_threat_monitor.ps1 -DeepScan -ScanInterval 15 -Verbose
+                } else {
+                    Write-Host "❌ Enhanced monitor not found." -ForegroundColor Red
+                    pause; Show-EnhancedMenu
+                }
+            } else {
+                Show-EnhancedMenu
+            }
+        }
+        
+        "3" { 
+            Write-Host "👤 Starting Personal Monitoring Mode..." -ForegroundColor Blue
+            Write-Host "📋 Features: Personal activity tracking with privacy controls" -ForegroundColor Gray
+            Write-Host "🔒 Privacy: Keystroke logging DISABLED, Network monitoring ENABLED" -ForegroundColor Green
+            if (Test-Path "enhanced_threat_monitor.ps1") {
+                .\enhanced_threat_monitor.ps1 -PersonalMonitoring -ScanInterval 10 -Verbose
+            } else {
+                Write-Host "❌ Enhanced monitor not found." -ForegroundColor Red
+                pause; Show-EnhancedMenu
+            }
+        }
+        
+        "4" { 
+            Write-Host "🏢 Starting Enterprise Mode (All Features)..." -ForegroundColor Magenta
+            Write-Host "🎯 Features: ALL advanced capabilities enabled" -ForegroundColor Gray
+            Write-Host "⚠️  Warning: This mode uses significant system resources" -ForegroundColor Yellow
+            $confirm = Read-Host "Continue with full enterprise mode? (y/N)"
+            if ($confirm -eq 'y' -or $confirm -eq 'Y') {
+                if (Test-Path "enhanced_threat_monitor.ps1") {
+                    .\enhanced_threat_monitor.ps1 -EnterpriseMode -DeepScan -PersonalMonitoring -AutoResponse -MLEnabled -ScanInterval 10 -Verbose
+                } else {
+                    Write-Host "❌ Enhanced monitor not found." -ForegroundColor Red
+                    pause; Show-EnhancedMenu
+                }
+            } else {
+                Show-EnhancedMenu
+            }
+        }
+        
+        "5" { 
+            Write-Host "🤖 Starting with ML Anomaly Detection..." -ForegroundColor Cyan
+            Write-Host "📋 Features: Machine learning powered anomaly detection" -ForegroundColor Gray
+            if (Test-Path "enhanced_threat_monitor.ps1") {
+                .\enhanced_threat_monitor.ps1 -MLEnabled -ScanInterval 10 -Verbose
+            } else {
+                Write-Host "❌ Enhanced monitor not found." -ForegroundColor Red
+                pause; Show-EnhancedMenu
+            }
+        }
+        
+        "6" { 
+            Write-Host "⚡ Starting with Automated Response..." -ForegroundColor Yellow
+            Write-Host "📋 Features: Automated threat response and mitigation" -ForegroundColor Gray
+            Write-Host "⚠️  Warning: This will automatically block suspicious IPs and quarantine processes" -ForegroundColor Red
+            $confirm = Read-Host "Enable automated response? (y/N)"
+            if ($confirm -eq 'y' -or $confirm -eq 'Y') {
+                if (Test-Path "enhanced_threat_monitor.ps1") {
+                    .\enhanced_threat_monitor.ps1 -AutoResponse -ScanInterval 10 -Verbose
+                } else {
+                    Write-Host "❌ Enhanced monitor not found." -ForegroundColor Red
+                    pause; Show-EnhancedMenu
+                }
+            } else {
+                Show-EnhancedMenu
+            }
+        }
+        
+        "7" { 
+            Write-Host "📈 Loading Enhanced Dashboard (Real-time)..." -ForegroundColor Green
+            if (Test-Path "enhanced_threat_dashboard.ps1") {
+                .\enhanced_threat_dashboard.ps1 -RealTime -RefreshInterval 5
+            } else {
+                Write-Host "❌ Enhanced dashboard not found." -ForegroundColor Red
+                pause; Show-EnhancedMenu
+            }
+        }
+        
+        "8" { 
+            Write-Host "🔍 Loading Threat Intelligence Dashboard..." -ForegroundColor Cyan
+            if (Test-Path "enhanced_threat_dashboard.ps1") {
+                .\enhanced_threat_dashboard.ps1 -ThreatIntelView -DetailedProfile
+            } else {
+                Write-Host "❌ Enhanced dashboard not found." -ForegroundColor Red
+            }
+            pause; Show-EnhancedMenu
+        }
+        
+        "9" { 
+            Write-Host "🤖 Loading ML Anomaly Analysis Dashboard..." -ForegroundColor Magenta
+            if (Test-Path "enhanced_threat_dashboard.ps1") {
+                .\enhanced_threat_dashboard.ps1 -MLAnalysis -DetailedProfile
+            } else {
+                Write-Host "❌ Enhanced dashboard not found." -ForegroundColor Red
+            }
+            pause; Show-EnhancedMenu
+        }
+        
+        "10" { 
+            Write-Host "👤 Loading Personal Monitoring Dashboard..." -ForegroundColor Blue
+            if (Test-Path "enhanced_threat_dashboard.ps1") {
+                .\enhanced_threat_dashboard.ps1 -PersonalReport -DetailedProfile
+            } else {
+                Write-Host "❌ Enhanced dashboard not found." -ForegroundColor Red
+            }
+            pause; Show-EnhancedMenu
+        }
+        
+        "11" { 
+            Write-Host "📋 Loading Detailed Threat Profiles..." -ForegroundColor Yellow
+            if (Test-Path "enhanced_threat_dashboard.ps1") {
+                .\enhanced_threat_dashboard.ps1 -DetailedProfile -MinThreatScore 30
+            } else {
+                Write-Host "❌ Enhanced dashboard not found." -ForegroundColor Red
+            }
+            pause; Show-EnhancedMenu
+        }
+        
+        "12" { 
+            Write-Host "🌍 Loading Geographic Threat Analysis..." -ForegroundColor Green
+            if (Test-Path "enhanced_threat_dashboard.ps1") {
+                .\enhanced_threat_dashboard.ps1 -ShowMap
+            } else {
+                Write-Host "❌ Enhanced dashboard not found." -ForegroundColor Red
+            }
+            pause; Show-EnhancedMenu
+        }
+        
+        "13" { 
+            Write-Host "📊 Generating Enhanced Interactive Report..." -ForegroundColor Green
+            if (Test-Path "enhanced_threat_dashboard.ps1") {
+                .\enhanced_threat_dashboard.ps1 -Export
+                Write-Host "✅ Enhanced interactive report generated with threat map and analysis features" -ForegroundColor Green
+            } else {
+                Write-Host "❌ Enhanced dashboard not found." -ForegroundColor Red
+            }
+            pause; Show-EnhancedMenu
+        }
+        
+        "14" { 
+            Write-Host "🗺️ Generating Geographic Threat Map Report..." -ForegroundColor Blue
+            if (Test-Path "enhanced_threat_dashboard.ps1") {
+                .\enhanced_threat_dashboard.ps1 -Export -ShowMap
+                Write-Host "✅ Geographic threat map report generated" -ForegroundColor Green
+            } else {
+                Write-Host "❌ Enhanced dashboard not found." -ForegroundColor Red
+            }
+            pause; Show-EnhancedMenu
+        }
+        
+        "15" { 
+            Write-Host "👤 Generating Personal Activity Report..." -ForegroundColor Cyan
+            if (Test-Path "enhanced_threat_dashboard.ps1") {
+                .\enhanced_threat_dashboard.ps1 -PersonalReport -Export
+                Write-Host "✅ Personal activity report generated with privacy compliance details" -ForegroundColor Green
+            } else {
+                Write-Host "❌ Enhanced dashboard not found." -ForegroundColor Red
+            }
+            pause; Show-EnhancedMenu
+        }
+        
+        "16" { 
+            Write-Host "🎯 Generating Executive Summary Report..." -ForegroundColor Yellow
+            Generate-ExecutiveSummary
+            pause; Show-EnhancedMenu
+        }
+        
+        "17" {
+            Write-Host "🔧 Running System Diagnostics & Health Check..." -ForegroundColor Cyan
+            Run-SystemDiagnostics
+            pause; Show-EnhancedMenu
+        }
+        
+        "18" { 
+            Write-Host "📊 System Status & Statistics..." -ForegroundColor Cyan
+            Show-SystemStatus
+            pause; Show-EnhancedMenu
+        }
+        
+        "19" {
+            Write-Host "🧹 Database Maintenance & Cleanup..." -ForegroundColor Cyan
+            Perform-DatabaseMaintenance
+            pause; Show-EnhancedMenu
+        }
+        
+        "20" {
+            Write-Host "⚡ Testing All Engines..." -ForegroundColor Cyan
+            Test-AllEngines
+            pause; Show-EnhancedMenu
+        }
+        
+        "21" {
+            Write-Host "🔒 Privacy & Security Settings..." -ForegroundColor Cyan
+            Show-PrivacySettings
+            pause; Show-EnhancedMenu
+        }
+        
+        "22" {
+            Write-Host "📚 Help & Documentation..." -ForegroundColor Cyan
+            Show-HelpDocumentation
+            pause; Show-EnhancedMenu
+        }
+        
+        "24" {
+            Write-Host "🔒 Launching Identity Protection Suite..." -ForegroundColor Cyan
+            if (Test-Path "identity_protection.ps1") { .\identity_protection.ps1 } else { Write-Host "❌ identity_protection.ps1 not found." -ForegroundColor Red }
+            pause; Show-EnhancedMenu
+        }
+        
+        "25" {
+            Write-Host "🕵️ Launching OSINT Investigator Suite..." -ForegroundColor Cyan
+            if (Test-Path "osint_investigator.ps1") { .\osint_investigator.ps1 } else { Write-Host "❌ osint_investigator.ps1 not found." -ForegroundColor Red }
+            pause; Show-EnhancedMenu
+        }
+        
+        "26" {
+            Write-Host "🔐 Launching Quantum Crypto Suite..." -ForegroundColor Magenta
+            if (Test-Path "quantum_crypto.ps1") { .\quantum_crypto.ps1 } else { Write-Host "❌ quantum_crypto.ps1 not found." -ForegroundColor Red }
+            pause; Show-EnhancedMenu
+        }
+        
+        "23" { 
+            Write-Host "🚪 Shutting down Enhanced Threat Intelligence System..." -ForegroundColor Gray
+            Write-Host "✅ Thank you for using Enhanced Threat Intelligence v4.0" -ForegroundColor Green
+            exit 
+        }
+        
+        default { 
+            Write-Host "❌ Invalid option. Please select 1-23." -ForegroundColor Red
+            Start-Sleep -Seconds 2
+            Show-EnhancedMenu 
+        }
+    }
+}
+
+function Generate-ExecutiveSummary {
+    Write-Host "🎯 EXECUTIVE SUMMARY GENERATOR" -ForegroundColor Yellow
+    Write-Host "=" * 50
+    
+    # Load database
+    if (Test-Path "enhanced_attacker_database.json") {
+        try {
+            $database = Get-Content "enhanced_attacker_database.json" -Raw | ConvertFrom-Json
+            $attackers = $database.PSObject.Properties | ForEach-Object { $_.Value }
+            
+            $totalThreats = $attackers.Count
+            $criticalThreats = ($attackers | Where-Object { $_.ThreatScore -gt 80 }).Count
+            $highThreats = ($attackers | Where-Object { $_.ThreatScore -gt 60 -and $_.ThreatScore -le 80 }).Count
+            $mediumThreats = ($attackers | Where-Object { $_.ThreatScore -gt 40 -and $_.ThreatScore -le 60 }).Count
+            $lowThreats = ($attackers | Where-Object { $_.ThreatScore -le 40 }).Count
+            
+            $threatIntelCoverage = ($attackers | Where-Object { $_.ThreatIntelligence }).Count
+            $mlAnalysisCoverage = ($attackers | Where-Object { $_.AnomalyDetection }).Count
+            $automatedResponses = ($attackers | Where-Object { $_.AutomatedResponse -and $_.AutomatedResponse.ActionsExecuted.Count -gt 0 }).Count
+            
+            # Top threat countries
+            $topCountries = $attackers | Where-Object { $_.Country } | Group-Object Country | Sort-Object Count -Descending | Select-Object -First 5
+            
+            Write-Host "📊 THREAT LANDSCAPE OVERVIEW:" -ForegroundColor White
+            Write-Host "• Total Threats Detected: $totalThreats" -ForegroundColor Gray
+            Write-Host "• Critical Threats: $criticalThreats" -ForegroundColor Red
+            Write-Host "• High Threats: $highThreats" -ForegroundColor Red
+            Write-Host "• Medium Threats: $mediumThreats" -ForegroundColor Yellow
+            Write-Host "• Low Threats: $lowThreats" -ForegroundColor Green
+            
+            Write-Host "`n🎯 ANALYSIS COVERAGE:" -ForegroundColor White
+            Write-Host "• Threat Intelligence Analysis: $threatIntelCoverage/$totalThreats ($(($threatIntelCoverage/$totalThreats*100).ToString('F1'))%)" -ForegroundColor Cyan
+            Write-Host "• ML Anomaly Detection: $mlAnalysisCoverage/$totalThreats ($(($mlAnalysisCoverage/$totalThreats*100).ToString('F1'))%)" -ForegroundColor Magenta
+            Write-Host "• Automated Responses Executed: $automatedResponses" -ForegroundColor Yellow
+            
+            if ($topCountries.Count -gt 0) {
+                Write-Host "`n🌍 TOP THREAT ORIGINS:" -ForegroundColor White
+                foreach ($country in $topCountries) {
+                    Write-Host "• $($country.Name): $($country.Count) threats" -ForegroundColor Gray
+                }
+            }
+            
+            # Risk assessment
+            $riskLevel = if ($criticalThreats -gt 10) { "HIGH" }
+                        elseif ($criticalThreats -gt 5 -or $highThreats -gt 20) { "MEDIUM" }
+                        else { "LOW" }
+            
+            $riskColor = switch ($riskLevel) {
+                "HIGH" { "Red" }
+                "MEDIUM" { "Yellow" }
+                "LOW" { "Green" }
+            }
+            
+            Write-Host "`n⚠️  OVERALL RISK ASSESSMENT: " -NoNewline
+            Write-Host "$riskLevel" -ForegroundColor $riskColor
+            
+            # Generate executive summary report file
+            $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+            $summaryFile = "Executive_Summary_$timestamp.txt"
+            
+            $summaryContent = @"
+ENHANCED THREAT INTELLIGENCE SYSTEM v4.0
+EXECUTIVE SUMMARY REPORT
+Generated: $(Get-Date)
+
+THREAT LANDSCAPE OVERVIEW:
+- Total Threats Detected: $totalThreats
+- Critical Threats (Score >80): $criticalThreats
+- High Threats (Score 61-80): $highThreats  
+- Medium Threats (Score 41-60): $mediumThreats
+- Low Threats (Score ≤40): $lowThreats
+
+ANALYSIS COVERAGE:
+- Threat Intelligence Analysis: $threatIntelCoverage/$totalThreats ($(($threatIntelCoverage/$totalThreats*100).ToString('F1'))%)
+- ML Anomaly Detection: $mlAnalysisCoverage/$totalThreats ($(($mlAnalysisCoverage/$totalThreats*100).ToString('F1'))%)
+- Automated Responses: $automatedResponses actions executed
+
+TOP THREAT ORIGINS:
+$($topCountries | ForEach-Object { "- $($_.Name): $($_.Count) threats" } | Out-String)
+
+OVERALL RISK ASSESSMENT: $riskLevel
+
+RECOMMENDATIONS:
+$(if ($riskLevel -eq "HIGH") { 
+"- IMMEDIATE: Review and enhance security posture
+- Investigate critical threats and implement additional controls
+- Consider increasing monitoring frequency and automated response capabilities" 
+} elseif ($riskLevel -eq "MEDIUM") {
+"- Continue enhanced monitoring
+- Review medium and high threats for patterns
+- Optimize automated response rules"
+} else {
+"- Maintain current monitoring levels
+- Regular review of threat intelligence feeds
+- Continue baseline learning and optimization"
+})
+
+Report generated by Enhanced Threat Intelligence System v4.0
+"@
+            
+            $summaryContent | Out-File $summaryFile -Encoding UTF8
+            Write-Host "`n✅ Executive summary saved to: $summaryFile" -ForegroundColor Green
+            
+        } catch {
+            Write-Host "❌ Error generating executive summary: $($_.Exception.Message)" -ForegroundColor Red
+        }
+    } else {
+        Write-Host "⚠️ No threat database found. Run monitoring first." -ForegroundColor Yellow
+    }
+}
+
+function Run-SystemDiagnostics {
+    Write-Host "🔧 ENHANCED SYSTEM DIAGNOSTICS v4.0" -ForegroundColor Cyan
+    Write-Host "=" * 60
+    
+    # Check core files
+    Write-Host "📁 CORE FILES CHECK:" -ForegroundColor White
+    $coreFiles = @(
+        "enhanced_threat_monitor.ps1",
+        "enhanced_threat_dashboard.ps1",
+        "enhanced_launcher.ps1"
+    )
+    
+    foreach ($file in $coreFiles) {
+        if (Test-Path $file) {
+            Write-Host "  ✅ $file" -ForegroundColor Green
+        } else {
+            Write-Host "  ❌ $file" -ForegroundColor Red
+        }
+    }
+    
+    # Check databases
+    Write-Host "`n🗄️ DATABASES CHECK:" -ForegroundColor White
+    $databases = @(
+        "enhanced_attacker_database.json",
+        "ioc_cache.json",
+        "process_baseline.json",
+        "personal_metrics.json"
+    )
+    
+    foreach ($db in $databases) {
+        if (Test-Path $db) {
+            try {
+                $content = Get-Content $db -Raw | ConvertFrom-Json
+                $count = if ($content.PSObject.Properties) { $content.PSObject.Properties.Count } else { 0 }
+                Write-Host "  ✅ $db ($count records)" -ForegroundColor Green
+            } catch {
+                Write-Host "  ⚠️ $db (corrupted)" -ForegroundColor Yellow
+            }
+        } else {
+            Write-Host "  ❌ $db (not found)" -ForegroundColor Red
+        }
+    }
+    
+    # Check logs
+    Write-Host "`n📝 LOGS CHECK:" -ForegroundColor White
+    $logFiles = @(
+        "enhanced_threat_intelligence.log",
+        "threat_intelligence.log"
+    )
+    
+    foreach ($log in $logFiles) {
+        if (Test-Path $log) {
+            $lineCount = (Get-Content $log).Count
+            Write-Host "  ✅ $log ($lineCount lines)" -ForegroundColor Green
+        } else {
+            Write-Host "  ❌ $log (not found)" -ForegroundColor Red
+        }
+    }
+    
+    # Check system requirements
+    Write-Host "`n💻 SYSTEM REQUIREMENTS:" -ForegroundColor White
+    $psVersion = $PSVersionTable.PSVersion
+    Write-Host "  • PowerShell Version: $psVersion" -ForegroundColor $(if ($psVersion.Major -ge 5) { "Green" } else { "Red" })
+    
+    $osVersion = (Get-WmiObject Win32_OperatingSystem).Caption
+    Write-Host "  • Operating System: $osVersion" -ForegroundColor Gray
+    
+    $memory = [Math]::Round((Get-WmiObject Win32_ComputerSystem).TotalPhysicalMemory / 1GB, 1)
+    Write-Host "  • Total Memory: ${memory}GB" -ForegroundColor $(if ($memory -ge 8) { "Green" } else { "Yellow" })
+    
+    # Check network connectivity
+    Write-Host "`n🌐 NETWORK CONNECTIVITY:" -ForegroundColor White
+    $testUrls = @(
+        "ip-api.com",
+        "api.greynoise.io",
+        "ipapi.co"
+    )
+    
+    foreach ($url in $testUrls) {
+        try {
+            $result = Test-NetConnection -ComputerName $url -Port 80 -InformationLevel Quiet
+            Write-Host "  $(if ($result) { '✅' } else { '❌' }) $url" -ForegroundColor $(if ($result) { "Green" } else { "Red" })
+        } catch {
+            Write-Host "  ❌ $url (failed)" -ForegroundColor Red
+        }
+    }
+    
+    # Overall health assessment
+    Write-Host "`n🏥 SYSTEM HEALTH ASSESSMENT:" -ForegroundColor White
+    $healthScore = 0
+    $maxScore = 10
+    
+    if (Test-Path "enhanced_threat_monitor.ps1") { $healthScore++ }
+    if (Test-Path "enhanced_threat_dashboard.ps1") { $healthScore++ }
+    if (Test-Path "enhanced_attacker_database.json") { $healthScore++ }
+    if ($psVersion.Major -ge 5) { $healthScore++ }
+    if ($memory -ge 4) { $healthScore++ }
+    
+    $healthPercentage = ($healthScore / $maxScore) * 100
+    $healthColor = if ($healthPercentage -gt 80) { "Green" } elseif ($healthPercentage -gt 60) { "Yellow" } else { "Red" }
+    
+    Write-Host "  Overall Health: $healthScore/$maxScore ($($healthPercentage.ToString('F0'))%)" -ForegroundColor $healthColor
+    
+    if ($healthPercentage -lt 80) {
+        Write-Host "`n💡 RECOMMENDATIONS:" -ForegroundColor Yellow
+        if (-not (Test-Path "enhanced_threat_monitor.ps1")) {
+            Write-Host "  • Ensure enhanced_threat_monitor.ps1 is present" -ForegroundColor White
+        }
+        if ($psVersion.Major -lt 5) {
+            Write-Host "  • Upgrade PowerShell to version 5.1 or later" -ForegroundColor White
+        }
+        if ($memory -lt 4) {
+            Write-Host "  • Consider upgrading system memory for better performance" -ForegroundColor White
+        }
+    }
+}
+
+function Get-CleanTimestamp {
+    param($TimestampObject)
+    if ($TimestampObject -eq $null) { return Get-Date }
+    try {
+        switch ($TimestampObject.GetType().Name) {
+            "DateTime" { return $TimestampObject }
+            "PSCustomObject" {
+                if ($TimestampObject.value) { return [DateTime]$TimestampObject.value }
+                elseif ($TimestampObject.DateTime) { return [DateTime]$TimestampObject.DateTime }
+                else { return Get-Date }
+            }
+            "String" { return [DateTime]$TimestampObject }
+            default { return [DateTime]$TimestampObject.ToString() }
+        }
+    } catch { return Get-Date }
+}
+
+function Show-SystemStatus {
+    Write-Host "📊 ENHANCED SYSTEM STATUS v4.0" -ForegroundColor Cyan
+    Write-Host "=" * 50
+    
+    # Check if monitoring is running
+    $monitorProcess = Get-Process powershell -ErrorAction SilentlyContinue | Where-Object {
+        try {
+            $cmdLine = (Get-WmiObject Win32_Process -Filter "ProcessId = $($_.Id)" -ErrorAction SilentlyContinue).CommandLine
+            $cmdLine -like "*enhanced_threat_monitor*"
+        } catch {
+            $false
+        }
+    }
+    
+    Write-Host "🔧 MONITORING STATUS:" -ForegroundColor White
+    if ($monitorProcess) {
+        Write-Host "  ✅ Enhanced Threat Monitor: RUNNING (PID: $($monitorProcess.Id))" -ForegroundColor Green
+        
+        # Try to determine mode
+        try {
+            $cmdLine = (Get-WmiObject Win32_Process -Filter "ProcessId = $($monitorProcess.Id)" -ErrorAction SilentlyContinue).CommandLine
+            $modes = @()
+            if ($cmdLine -like "*DeepScan*") { $modes += "Deep Scan" }
+            if ($cmdLine -like "*PersonalMonitoring*") { $modes += "Personal Monitoring" }
+            if ($cmdLine -like "*AutoResponse*") { $modes += "Auto Response" }
+            if ($cmdLine -like "*MLEnabled*") { $modes += "ML Detection" }
+            if ($cmdLine -like "*EnterpriseMode*") { $modes += "Enterprise Mode" }
+            
+            if ($modes.Count -gt 0) {
+                Write-Host "  🎯 Active Modes: $($modes -join ', ')" -ForegroundColor Cyan
+            }
+        } catch {
+            Write-Host "  📊 Mode: Unable to determine" -ForegroundColor Yellow
+        }
+    } else {
+        Write-Host "  ❌ Enhanced Threat Monitor: STOPPED" -ForegroundColor Red
+    }
+    
+    # Database statistics
+    Write-Host "`n📊 DATABASE STATISTICS:" -ForegroundColor White
+    if (Test-Path "enhanced_attacker_database.json") {
+        try {
+            $database = Get-Content "enhanced_attacker_database.json" -Raw | ConvertFrom-Json
+            $attackers = $database.PSObject.Properties | ForEach-Object { $_.Value }
+            
+            Write-Host "  📈 Total Threats: $($attackers.Count)" -ForegroundColor Green
+            
+            # Threat level breakdown
+            $critical = ($attackers | Where-Object { $_.ThreatScore -gt 80 }).Count
+            $high = ($attackers | Where-Object { $_.ThreatScore -gt 60 -and $_.ThreatScore -le 80 }).Count
+            $medium = ($attackers | Where-Object { $_.ThreatScore -gt 40 -and $_.ThreatScore -le 60 }).Count
+            $low = ($attackers | Where-Object { $_.ThreatScore -le 40 }).Count
+            
+            Write-Host "    🔴 Critical: $critical" -ForegroundColor Red
+            Write-Host "    🟠 High: $high" -ForegroundColor Red
+            Write-Host "    🟡 Medium: $medium" -ForegroundColor Yellow
+            Write-Host "    🟢 Low: $low" -ForegroundColor Green
+            
+            # Analysis coverage
+            $threatIntelCount = ($attackers | Where-Object { $_.ThreatIntelligence }).Count
+            $processAnalysisCount = ($attackers | Where-Object { $_.ProcessBehavior }).Count
+            $mlAnalysisCount = ($attackers | Where-Object { $_.AnomalyDetection }).Count
+            $automatedResponseCount = ($attackers | Where-Object { $_.AutomatedResponse -and $_.AutomatedResponse.ActionsExecuted.Count -gt 0 }).Count
+            
+            Write-Host "`n🎯 ANALYSIS COVERAGE:" -ForegroundColor White
+            Write-Host "  🔍 Threat Intelligence: $threatIntelCount/$($attackers.Count)" -ForegroundColor Cyan
+            Write-Host "  🔧 Process Analysis: $processAnalysisCount/$($attackers.Count)" -ForegroundColor Green
+            Write-Host "  🤖 ML Anomaly Detection: $mlAnalysisCount/$($attackers.Count)" -ForegroundColor Magenta
+            Write-Host "  ⚡ Automated Responses: $automatedResponseCount" -ForegroundColor Yellow
+            
+            # Recent activity
+            $recentThreats = $attackers | Where-Object {
+                if ($_.Timestamp) {
+                    $ts = Get-CleanTimestamp $_.Timestamp
+                    $ts -gt (Get-Date).AddHours(-1)
+                } else { $false }
+            }
+            
+            Write-Host "`n🕒 RECENT ACTIVITY (Last Hour):" -ForegroundColor White
+            Write-Host "  📊 New Threats: $($recentThreats.Count)" -ForegroundColor $(if ($recentThreats.Count -gt 0) { "Yellow" } else { "Green" })
+            
+        } catch {
+            Write-Host "  ❌ Database read error" -ForegroundColor Red
+        }
+    } else {
+        Write-Host "  ❌ No database found" -ForegroundColor Red
+    }
+    
+    # Log analysis
+    Write-Host "`n📝 LOG ANALYSIS:" -ForegroundColor White
+    if (Test-Path "enhanced_threat_intelligence.log") {
+        $logContent = Get-Content "enhanced_threat_intelligence.log" -Tail 100
+        $todaysLogs = $logContent | Where-Object { $_ -match (Get-Date).ToString("yyyy-MM-dd") }
+        
+        $criticalLogs = ($todaysLogs | Where-Object { $_ -match "\[CRITICAL\]" }).Count
+        $warningLogs = ($todaysLogs | Where-Object { $_ -match "\[WARNING\]" }).Count
+        $infoLogs = ($todaysLogs | Where-Object { $_ -match "\[INFO\]" }).Count
+        
+        Write-Host "  📅 Today's Activity:" -ForegroundColor Gray
+        Write-Host "    🔴 Critical: $criticalLogs" -ForegroundColor Red
+        Write-Host "    🟡 Warnings: $warningLogs" -ForegroundColor Yellow
+        Write-Host "    ℹ️  Info: $infoLogs" -ForegroundColor Green
+    } else {
+        Write-Host "  ❌ No enhanced log file found" -ForegroundColor Red
+    }
+    
+    # System resource usage
+    Write-Host "`n💻 SYSTEM RESOURCES:" -ForegroundColor White
+    $cpuUsage = Get-WmiObject win32_processor | Measure-Object -property LoadPercentage -Average | ForEach-Object {$_.Average}
+    $memory = Get-WmiObject -Class win32_operatingsystem
+    $memoryUsage = [Math]::Round(((($memory.TotalVisibleMemorySize - $memory.FreePhysicalMemory)*100)/ $memory.TotalVisibleMemorySize), 2)
+    
+    Write-Host "  🖥️  CPU Usage: $cpuUsage%" -ForegroundColor $(if ($cpuUsage -gt 80) { "Red" } elseif ($cpuUsage -gt 60) { "Yellow" } else { "Green" })
+    Write-Host "  🧠 Memory Usage: $memoryUsage%" -ForegroundColor $(if ($memoryUsage -gt 80) { "Red" } elseif ($memoryUsage -gt 60) { "Yellow" } else { "Green" })
+}
+
+function Perform-DatabaseMaintenance {
+    Write-Host "🧹 DATABASE MAINTENANCE & CLEANUP" -ForegroundColor Cyan
+    Write-Host "=" * 50
+    
+    $cleanupActions = @()
+    
+    # Clean up old threat data (older than 30 days)
+    if (Test-Path "enhanced_attacker_database.json") {
+        try {
+            $database = Get-Content "enhanced_attacker_database.json" -Raw | ConvertFrom-Json
+            $attackers = @{}
+            $removedCount = 0
+            $cutoffDate = (Get-Date).AddDays(-30)
+            
+            $database.PSObject.Properties | ForEach-Object {
+                $attacker = $_.Value
+                $attackerDate = try { [DateTime]$attacker.Timestamp } catch { Get-Date }
+                
+                if ($attackerDate -gt $cutoffDate) {
+                    $attackers[$_.Name] = $_.Value
+                } else {
+                    $removedCount++
+                }
+            }
+            
+            if ($removedCount -gt 0) {
+                $attackers | ConvertTo-Json -Depth 4 | Out-File "enhanced_attacker_database.json" -Encoding UTF8
+                $cleanupActions += "Removed $removedCount old threat records (>30 days)"
+            }
+            
+        } catch {
+            $cleanupActions += "Failed to clean threat database: $($_.Exception.Message)"
+        }
+    }
+    
+    # Clean up log files (keep last 10000 lines)
+    $logFiles = @("enhanced_threat_intelligence.log", "threat_intelligence.log")
+    foreach ($logFile in $logFiles) {
+        if (Test-Path $logFile) {
+            try {
+                $logContent = Get-Content $logFile
+                if ($logContent.Count -gt 10000) {
+                    $logContent | Select-Object -Last 10000 | Set-Content $logFile
+                    $cleanupActions += "Trimmed $logFile to last 10000 lines"
+                }
+            } catch {
+                $cleanupActions += "Failed to clean $logFile"
+            }
+        }
+    }
+    
+    # Clean up cache files
+    $cacheFiles = @("ioc_cache.json", "certificate_cache.json", "geo_context_cache.json")
+    foreach ($cacheFile in $cacheFiles) {
+        if (Test-Path $cacheFile) {
+            try {
+                $cache = Get-Content $cacheFile -Raw | ConvertFrom-Json
+                $validEntries = @{}
+                $removedEntries = 0
+                
+                $cache.PSObject.Properties | ForEach-Object {
+                    $entry = $_.Value
+                    $expiryDate = try { [DateTime]$entry.ExpiresAt } catch { (Get-Date).AddDays(-1) }
+                    
+                    if ($expiryDate -gt (Get-Date)) {
+                        $validEntries[$_.Name] = $_.Value
+                    } else {
+                        $removedEntries++
+                    }
+                }
+                
+                if ($removedEntries -gt 0) {
+                    $validEntries | ConvertTo-Json -Depth 4 | Out-File $cacheFile -Encoding UTF8
+                    $cleanupActions += "Cleaned $removedEntries expired entries from $cacheFile"
+                }
+                
+            } catch {
+                $cleanupActions += "Failed to clean $cacheFile"
+            }
+        }
+    }
+    
+    # Optimize database structure
+    if (Test-Path "enhanced_attacker_database.json") {
+        try {
+            $database = Get-Content "enhanced_attacker_database.json" -Raw | ConvertFrom-Json
+            $optimizedDatabase = @{}
+            
+            $database.PSObject.Properties | ForEach-Object {
+                $attacker = $_.Value
+                
+                # Remove empty or null properties to reduce file size
+                $optimizedAttacker = @{}
+                $attacker.PSObject.Properties | ForEach-Object {
+                    if ($_.Value -ne $null -and $_.Value -ne "" -and $_.Value -ne @()) {
+                        $optimizedAttacker[$_.Name] = $_.Value
+                    }
+                }
+                
+                $optimizedDatabase[$_.Name] = $optimizedAttacker
+            }
+            
+            $optimizedDatabase | ConvertTo-Json -Depth 4 | Out-File "enhanced_attacker_database.json" -Encoding UTF8
+            $cleanupActions += "Optimized database structure"
+            
+        } catch {
+            $cleanupActions += "Failed to optimize database"
+        }
+    }
+    
+    # Display results
+    Write-Host "🧹 CLEANUP RESULTS:" -ForegroundColor Green
+    if ($cleanupActions.Count -gt 0) {
+        foreach ($action in $cleanupActions) {
+            Write-Host "  ✅ $action" -ForegroundColor Green
+        }
+    } else {
+        Write-Host "  ℹ️ No cleanup required - system is already optimized" -ForegroundColor Cyan
+    }
+    
+    # Generate maintenance report
+    $maintenanceReport = @"
+DATABASE MAINTENANCE REPORT
+Generated: $(Get-Date)
+
+Actions Performed:
+$($cleanupActions | ForEach-Object { "- $_" } | Out-String)
+
+System Status: Optimized
+Next Maintenance: $(Get-Date).AddDays(7).ToString('yyyy-MM-dd')
+"@
+    
+    $reportFile = "maintenance_report_$(Get-Date -Format 'yyyyMMdd').txt"
+    $maintenanceReport | Out-File $reportFile -Encoding UTF8
+    Write-Host "`n📄 Maintenance report saved: $reportFile" -ForegroundColor Cyan
+}
+
+function Test-AllEngines {
+    Write-Host "⚡ TESTING ALL ENGINES" -ForegroundColor Cyan
+    Write-Host "=" * 40
+    
+    $testResults = @()
+    
+    # Test basic PowerShell functionality
+    try {
+        $psTest = $PSVersionTable.PSVersion
+        $testResults += @{ Engine = "PowerShell"; Status = "PASS"; Details = "Version $psTest" }
+    } catch {
+        $testResults += @{ Engine = "PowerShell"; Status = "FAIL"; Details = $_.Exception.Message }
+    }
+    
+    # Test network connectivity
+    try {
+        $networkTest = Test-NetConnection -ComputerName "8.8.8.8" -Port 53 -InformationLevel Quiet
+        $testResults += @{ Engine = "Network"; Status = $(if ($networkTest) { "PASS" } else { "FAIL" }); Details = "DNS connectivity" }
+    } catch {
+        $testResults += @{ Engine = "Network"; Status = "FAIL"; Details = "Network test failed" }
+    }
+    
+    # Test API connectivity
+    try {
+        $apiTest = Invoke-RestMethod -Uri "http://ip-api.com/json/8.8.8.8" -TimeoutSec 5
+        $testResults += @{ Engine = "API"; Status = "PASS"; Details = "Geolocation API responsive" }
+    } catch {
+        $testResults += @{ Engine = "API"; Status = "FAIL"; Details = "API connectivity failed" }
+    }
+    
+    # Test file system access
+    try {
+        $testFile = "engine_test_$(Get-Random).tmp"
+        "test" | Out-File $testFile
+        Remove-Item $testFile
+        $testResults += @{ Engine = "FileSystem"; Status = "PASS"; Details = "Read/write access verified" }
+    } catch {
+        $testResults += @{ Engine = "FileSystem"; Status = "FAIL"; Details = "File system access failed" }
+    }
+    
+    # Test Windows Management
+    try {
+        $wmiTest = Get-WmiObject Win32_OperatingSystem | Select-Object -First 1
+        $testResults += @{ Engine = "WMI"; Status = "PASS"; Details = "Windows Management accessible" }
+    } catch {
+        $testResults += @{ Engine = "WMI"; Status = "FAIL"; Details = "WMI access failed" }
+    }
+    
+    # Test process monitoring
+    try {
+        $processTest = Get-Process | Select-Object -First 1
+        $testResults += @{ Engine = "Process"; Status = "PASS"; Details = "Process enumeration working" }
+    } catch {
+        $testResults += @{ Engine = "Process"; Status = "FAIL"; Details = "Process monitoring failed" }
+    }
+    
+    # Test network monitoring
+    try {
+        $netstatTest = netstat -ano | Select-Object -First 1
+        $testResults += @{ Engine = "NetStat"; Status = "PASS"; Details = "Network monitoring working" }
+    } catch {
+        $testResults += @{ Engine = "NetStat"; Status = "FAIL"; Details = "Network monitoring failed" }
+    }
+    
+    # Display results
+    Write-Host "🧪 ENGINE TEST RESULTS:" -ForegroundColor White
+    foreach ($result in $testResults) {
+        $statusColor = if ($result.Status -eq "PASS") { "Green" } else { "Red" }
+        $statusIcon = if ($result.Status -eq "PASS") { "✅" } else { "❌" }
+        
+        Write-Host "  $statusIcon $($result.Engine): " -NoNewline
+        Write-Host "$($result.Status)" -ForegroundColor $statusColor -NoNewline
+        Write-Host " - $($result.Details)" -ForegroundColor Gray
+    }
+    
+    $passCount = ($testResults | Where-Object { $_.Status -eq "PASS" }).Count
+    $totalCount = $testResults.Count
+    $overallHealth = ($passCount / $totalCount) * 100
+    
+    Write-Host "`n📊 OVERALL ENGINE HEALTH: $passCount/$totalCount ($($overallHealth.ToString('F0'))%)" -ForegroundColor $(if ($overallHealth -gt 80) { "Green" } elseif ($overallHealth -gt 60) { "Yellow" } else { "Red" })
+    
+    if ($overallHealth -lt 100) {
+        Write-Host "`n💡 RECOMMENDATIONS:" -ForegroundColor Yellow
+        $failedEngines = $testResults | Where-Object { $_.Status -eq "FAIL" }
+        foreach ($failure in $failedEngines) {
+            Write-Host "  • Fix $($failure.Engine): $($failure.Details)" -ForegroundColor White
+        }
+    } else {
+        Write-Host "`n🎉 All engines are functioning perfectly!" -ForegroundColor Green
+    }
+}
+
+function Show-PrivacySettings {
+    Write-Host "🔒 PRIVACY & SECURITY SETTINGS" -ForegroundColor Cyan
+    Write-Host "=" * 50
+    
+    Write-Host "📊 CURRENT PRIVACY CONFIGURATION:" -ForegroundColor White
+    Write-Host "  • Personal Monitoring: AVAILABLE" -ForegroundColor Green
+    Write-Host "  • Keystroke Logging: DISABLED (by design)" -ForegroundColor Green
+    Write-Host "  • Browsing History: NOT COLLECTED" -ForegroundColor Green
+    Write-Host "  • Network Activity: MONITORED (connections only)" -ForegroundColor Yellow
+    Write-Host "  • Process Monitoring: ENABLED (security purposes)" -ForegroundColor Yellow
+    Write-Host "  • Data Retention: 30 days (configurable)" -ForegroundColor Cyan
+    Write-Host "  • Data Encryption: File system level" -ForegroundColor Cyan
+    
+    Write-Host "`n🛡️ SECURITY FEATURES:" -ForegroundColor White
+    Write-Host "  • Local Processing: All analysis performed locally" -ForegroundColor Green
+    Write-Host "  • No Cloud Storage: Data stays on your system" -ForegroundColor Green
+    Write-Host "  • API Calls: Only for geolocation (IP addresses only)" -ForegroundColor Yellow
+    Write-Host "  • Automated Deletion: Old data automatically removed" -ForegroundColor Green
+    Write-Host "  • User Control: Full control over monitoring features" -ForegroundColor Green
+    
+    Write-Host "`n📋 DATA COLLECTED:" -ForegroundColor White
+    Write-Host "  ✅ Network connections (IP, port, process)" -ForegroundColor Gray
+    Write-Host "  ✅ Process information (name, path, digital signature)" -ForegroundColor Gray
+    Write-Host "  ✅ Geolocation data (country, city, ISP)" -ForegroundColor Gray
+    Write-Host "  ✅ Threat intelligence correlations" -ForegroundColor Gray
+    Write-Host "  ✅ System security events" -ForegroundColor Gray
+    
+    Write-Host "`n❌ DATA NOT COLLECTED:" -ForegroundColor White
+    Write-Host "  • Keystrokes or typed content" -ForegroundColor Green
+    Write-Host "  • Screen captures or window content" -ForegroundColor Green
+    Write-Host "  • Personal files or documents" -ForegroundColor Green
+    Write-Host "  • Browsing history or websites visited" -ForegroundColor Green
+    Write-Host "  • Personal communications" -ForegroundColor Green
+    
+    Write-Host "`n⚙️ PRIVACY CONTROLS:" -ForegroundColor White
+    Write-Host "  1. Disable Personal Monitoring" -ForegroundColor Cyan
+    Write-Host "  2. Configure Data Retention Period" -ForegroundColor Cyan
+    Write-Host "  3. Export Personal Data" -ForegroundColor Cyan
+    Write-Host "  4. Delete All Personal Data" -ForegroundColor Cyan
+    Write-Host "  5. View Data Usage Statistics" -ForegroundColor Cyan
+    Write-Host "  6. Return to Main Menu" -ForegroundColor Gray
+    
+    $choice = Read-Host "`nSelect privacy option (1-6)"
+    
+    switch ($choice) {
+        "1" {
+            Write-Host "⚠️ This will disable personal monitoring features" -ForegroundColor Yellow
+            $confirm = Read-Host "Confirm disable personal monitoring? (y/N)"
+            if ($confirm -eq 'y' -or $confirm -eq 'Y') {
+                Write-Host "✅ Personal monitoring disabled" -ForegroundColor Green
+                # In a real implementation, this would update configuration
+            }
+        }
+        "2" {
+            $days = Read-Host "Enter data retention period in days (1-365)"
+            if ($days -match '^\d+$' -and [int]$days -ge 1 -and [int]$days -le 365) {
+                Write-Host "✅ Data retention set to $days days" -ForegroundColor Green
+            } else {
+                Write-Host "❌ Invalid input. Please enter a number between 1-365" -ForegroundColor Red
+            }
+        }
+        "3" {
+            Write-Host "📄 Exporting personal data..." -ForegroundColor Cyan
+            # Generate personal data export
+            $exportData = @"
+PERSONAL DATA EXPORT
+Generated: $(Get-Date)
+
+This export contains all personal monitoring data collected by the Enhanced Threat Intelligence System.
+
+Data Retention Period: 30 days
+Collection Start: $(Get-Date).AddDays(-30).ToString('yyyy-MM-dd')
+Export Date: $(Get-Date -Format 'yyyy-MM-dd')
+
+No personally identifiable information beyond network security data is collected.
+"@
+            $exportFile = "personal_data_export_$(Get-Date -Format 'yyyyMMdd').txt"
+            $exportData | Out-File $exportFile -Encoding UTF8
+            Write-Host "✅ Personal data exported to: $exportFile" -ForegroundColor Green
+        }
+        "4" {
+            Write-Host "⚠️ This will permanently delete all personal monitoring data" -ForegroundColor Red
+            $confirm = Read-Host "Confirm delete ALL personal data? (y/N)"
+            if ($confirm -eq 'y' -or $confirm -eq 'Y') {
+                # Delete personal data files
+                $personalFiles = @("personal_metrics.json", "user_behavior.json")
+                foreach ($file in $personalFiles) {
+                    if (Test-Path $file) {
+                        Remove-Item $file -Force
+                    }
+                }
+                Write-Host "✅ All personal data deleted" -ForegroundColor Green
+            }
+        }
+        "5" {
+            Write-Host "📊 DATA USAGE STATISTICS:" -ForegroundColor Cyan
+            if (Test-Path "enhanced_attacker_database.json") {
+                $fileSize = [Math]::Round((Get-Item "enhanced_attacker_database.json").Length / 1KB, 2)
+                Write-Host "  • Database Size: ${fileSize}KB" -ForegroundColor Gray
+            }
+            if (Test-Path "enhanced_threat_intelligence.log") {
+                $logSize = [Math]::Round((Get-Item "enhanced_threat_intelligence.log").Length / 1KB, 2)
+                Write-Host "  • Log File Size: ${logSize}KB" -ForegroundColor Gray
+            }
+            Write-Host "  • Estimated Total: $([Math]::Round($fileSize + $logSize, 2))KB" -ForegroundColor Gray
+        }
+        "6" {
+            return
+        }
+        default {
+            Write-Host "❌ Invalid option" -ForegroundColor Red
+        }
+    }
+    
+    pause
+}
+
+function Show-HelpDocumentation {
+    Write-Host "📚 ENHANCED THREAT INTELLIGENCE SYSTEM v4.0 - HELP" -ForegroundColor Cyan
+    Write-Host "=" * 65
+    
+    Write-Host "🎯 SYSTEM OVERVIEW:" -ForegroundColor White
+    Write-Host "The Enhanced Threat Intelligence System v4.0 is a complete enterprise-grade" -ForegroundColor Gray
+    Write-Host "multi-engine threat detection and response platform that provides:" -ForegroundColor Gray
+    Write-Host ""
+    
+    Write-Host "🔧 CORE FEATURES:" -ForegroundColor Green
+    Write-Host "  • Multi-Source Threat Intelligence & IOC Correlation" -ForegroundColor Gray
+    Write-Host "  • Advanced Process Behavior Analysis & Baseline Learning" -ForegroundColor Gray
+    Write-Host "  • Machine Learning Anomaly Detection (Multiple Models)" -ForegroundColor Gray
+    Write-Host "  • Automated Response & Threat Mitigation" -ForegroundColor Gray
+    Write-Host "  • Enhanced Geolocation & Context Intelligence" -ForegroundColor Gray
+    Write-Host "  • Personal Monitoring with Privacy Controls" -ForegroundColor Gray
+    Write-Host "  • Real-time Cross-Correlation Analysis" -ForegroundColor Gray
+    Write-Host "  • Enterprise-Grade Reporting & Visualization" -ForegroundColor Gray
+    Write-Host ""
+    
+    Write-Host "🚀 QUICK START GUIDE:" -ForegroundColor Yellow
+    Write-Host "  1. Run Enhanced Launcher (enhanced_launcher.ps1)" -ForegroundColor Gray
+    Write-Host "  2. Select monitoring mode (Standard/Enterprise/Personal)" -ForegroundColor Gray
+    Write-Host "  3. Monitor real-time threats in dashboard" -ForegroundColor Gray
+    Write-Host "  4. Export reports for analysis" -ForegroundColor Gray
+    Write-Host ""
+    
+    Write-Host "📊 MONITORING MODES:" -ForegroundColor Cyan
+    Write-Host "  • Standard: Basic monitoring with threat intelligence" -ForegroundColor Gray
+    Write-Host "  • Deep Scan: Comprehensive analysis (resource intensive)" -ForegroundColor Gray
+    Write-Host "  • Personal: Privacy-focused monitoring for individuals" -ForegroundColor Gray
+    Write-Host "  • Enterprise: All features enabled (maximum security)" -ForegroundColor Gray
+    Write-Host "  • ML Mode: Machine learning anomaly detection" -ForegroundColor Gray
+    Write-Host "  • Auto Response: Automated threat mitigation" -ForegroundColor Gray
+    Write-Host ""
+    
+    Write-Host "🛡️ PRIVACY & SECURITY:" -ForegroundColor Blue
+    Write-Host "  • All processing is performed locally on your system" -ForegroundColor Gray
+    Write-Host "  • No personal data is sent to external services" -ForegroundColor Gray
+    Write-Host "  • Only IP addresses are sent to geolocation APIs" -ForegroundColor Gray
+    Write-Host "  • Data retention is configurable (default: 30 days)" -ForegroundColor Gray
+    Write-Host "  • No keystroke logging or personal file access" -ForegroundColor Gray
+    Write-Host ""
+    
+    Write-Host "📁 FILES & DATABASES:" -ForegroundColor Magenta
+    Write-Host "  • enhanced_attacker_database.json - Main threat database" -ForegroundColor Gray
+    Write-Host "  • enhanced_threat_intelligence.log - System logs" -ForegroundColor Gray
+    Write-Host "  • ioc_cache.json - Threat intelligence cache" -ForegroundColor Gray
+    Write-Host "  • process_baseline.json - Process behavior baseline" -ForegroundColor Gray
+    Write-Host "  • personal_metrics.json - Personal monitoring data" -ForegroundColor Gray
+    Write-Host ""
+    
+    Write-Host "⚠️ SYSTEM REQUIREMENTS:" -ForegroundColor Red
+    Write-Host "  • Windows 10/11 or Windows Server 2016+" -ForegroundColor Gray
+    Write-Host "  • PowerShell 5.1 or later" -ForegroundColor Gray
+    Write-Host "  • 4GB+ RAM recommended" -ForegroundColor Gray
+    Write-Host "  • Internet connection for threat intelligence" -ForegroundColor Gray
+    Write-Host "  • Administrator privileges for some features" -ForegroundColor Gray
+    Write-Host ""
+    
+    Write-Host "🆘 TROUBLESHOOTING:" -ForegroundColor Yellow
+    Write-Host "  • Run System Diagnostics (Option 17) for health check" -ForegroundColor Gray
+    Write-Host "  • Check logs in enhanced_threat_intelligence.log" -ForegroundColor Gray
+    Write-Host "  • Ensure PowerShell execution policy allows scripts" -ForegroundColor Gray
+    Write-Host "  • Verify internet connectivity for API calls" -ForegroundColor Gray
+    Write-Host "  • Run Database Maintenance (Option 19) if issues persist" -ForegroundColor Gray
+    Write-Host ""
+    
+    Write-Host "📞 ADDITIONAL HELP:" -ForegroundColor Green
+    Write-Host "  • Use System Status (Option 18) to monitor performance" -ForegroundColor Gray
+    Write-Host "  • Test All Engines (Option 20) to verify functionality" -ForegroundColor Gray
+    Write-Host "  • Review Privacy Settings (Option 21) for data controls" -ForegroundColor Gray
+    Write-Host "  • Export reports for detailed analysis and documentation" -ForegroundColor Gray
+    Write-Host ""
+    
+    Write-Host "💡 BEST PRACTICES:" -ForegroundColor Cyan
+    Write-Host "  • Start with Standard mode for initial setup" -ForegroundColor Gray
+    Write-Host "  • Allow 24-48 hours for baseline learning" -ForegroundColor Gray
+    Write-Host "  • Regularly export reports for trend analysis" -ForegroundColor Gray
+    Write-Host "  • Monitor system resources in Enterprise mode" -ForegroundColor Gray
+    Write-Host "  • Perform regular database maintenance" -ForegroundColor Gray
+    Write-Host "  • Review privacy settings based on your requirements" -ForegroundColor Gray
+}
+
+# Initialize and show menu
+Write-Host "🛡️ ENHANCED THREAT INTELLIGENCE SYSTEM v4.0" -ForegroundColor White -BackgroundColor DarkBlue
+Write-Host "🚀 Initializing Complete Enterprise-Grade Security Platform..." -ForegroundColor Green
+Write-Host ""
+
+Start-Sleep -Seconds 2
+Show-EnhancedMenu

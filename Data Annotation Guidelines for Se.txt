@@ -1,0 +1,1472 @@
+# Data Annotation Guidelines for Security Platform
+
+## Table of Contents
+1. [Overview](#overview)
+2. [Annotation Standards](#annotation-standards)
+3. [Security Threat Taxonomy](#security-threat-taxonomy)
+4. [Annotation Tools & Platform](#annotation-tools-platform)
+5. [Quality Control Process](#quality-control-process)
+6. [Annotation Workflows](#annotation-workflows)
+7. [Data Privacy & Compliance](#data-privacy-compliance)
+8. [Performance Metrics](#performance-metrics)
+
+## Overview
+
+This document provides comprehensive guidelines for annotating security data to train machine learning models for threat detection, anomaly identification, and security monitoring.
+
+### Annotation Objectives
+- Ensure consistent, high-quality labeled data for ML training
+- Maintain inter-annotator agreement above 90%
+- Create comprehensive threat taxonomy
+- Enable continuous learning through feedback loops
+- Comply with data privacy regulations
+
+### Key Principles
+1. **Accuracy**: Labels must be correct and verifiable
+2. **Consistency**: Similar patterns must receive identical labels
+3. **Completeness**: All relevant features must be annotated
+4. **Clarity**: Ambiguous cases must be documented
+5. **Security**: Sensitive data must be handled appropriately
+
+## Annotation Standards
+
+### Label Categories
+
+```yaml
+# annotation_schema.yaml
+annotation_schema:
+  version: "1.0.0"
+  
+  threat_levels:
+    - id: "critical"
+      name: "Critical Threat"
+      color: "#FF0000"
+      description: "Immediate action required, severe impact"
+      sla_response: "< 5 minutes"
+      
+    - id: "high"
+      name: "High Threat"
+      color: "#FF6600"
+      description: "Significant risk, prompt action needed"
+      sla_response: "< 30 minutes"
+      
+    - id: "medium"
+      name: "Medium Threat"
+      color: "#FFB300"
+      description: "Moderate risk, scheduled response"
+      sla_response: "< 4 hours"
+      
+    - id: "low"
+      name: "Low Threat"
+      color: "#FFD700"
+      description: "Minor risk, routine handling"
+      sla_response: "< 24 hours"
+      
+    - id: "benign"
+      name: "Benign/Normal"
+      color: "#00FF00"
+      description: "No threat detected"
+      sla_response: "N/A"
+  
+  attack_types:
+    network:
+      - ddos
+      - port_scanning
+      - packet_injection
+      - man_in_the_middle
+      - dns_poisoning
+      
+    application:
+      - sql_injection
+      - xss
+      - csrf
+      - command_injection
+      - path_traversal
+      
+    authentication:
+      - brute_force
+      - credential_stuffing
+      - session_hijacking
+      - privilege_escalation
+      - password_spraying
+      
+    malware:
+      - ransomware
+      - trojan
+      - worm
+      - rootkit
+      - spyware
+      
+    data:
+      - exfiltration
+      - unauthorized_access
+      - data_tampering
+      - information_disclosure
+      - privacy_violation
+  
+  confidence_scores:
+    - value: 1.0
+      label: "Certain"
+      description: "100% confident in annotation"
+      
+    - value: 0.8
+      label: "High Confidence"
+      description: "80-99% confident"
+      
+    - value: 0.6
+      label: "Moderate Confidence"
+      description: "60-79% confident"
+      
+    - value: 0.4
+      label: "Low Confidence"
+      description: "40-59% confident"
+      
+    - value: 0.2
+      label: "Uncertain"
+      description: "< 40% confident, needs review"
+```
+
+### Annotation Format
+
+```json
+{
+  "annotation_format": {
+    "id": "unique_annotation_id",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "annotator_id": "annotator_123",
+    "data_id": "sample_456",
+    "annotations": [
+      {
+        "type": "threat_detection",
+        "label": "high",
+        "attack_type": ["sql_injection", "data_exfiltration"],
+        "confidence": 0.85,
+        "evidence": {
+          "indicators": [
+            "Suspicious SQL pattern detected",
+            "Unusual data transfer volume"
+          ],
+          "affected_systems": ["database_server", "api_gateway"],
+          "time_window": {
+            "start": "2024-01-15T10:25:00Z",
+            "end": "2024-01-15T10:30:00Z"
+          }
+        },
+        "notes": "Multiple SQL injection attempts followed by data transfer spike"
+      }
+    ],
+    "metadata": {
+      "annotation_time_seconds": 45,
+      "tools_used": ["security_dashboard", "log_analyzer"],
+      "requires_review": false
+    }
+  }
+}
+```
+
+## Security Threat Taxonomy
+
+### Hierarchical Classification System
+
+```python
+# taxonomy/threat_hierarchy.py
+from enum import Enum
+from typing import Dict, List, Optional
+from dataclasses import dataclass
+
+@dataclass
+class ThreatIndicator:
+    """Individual threat indicator"""
+    name: str
+    pattern: str
+    severity_weight: float
+    false_positive_rate: float
+    
+class ThreatCategory(Enum):
+    """Main threat categories"""
+    NETWORK = "network"
+    APPLICATION = "application"
+    ENDPOINT = "endpoint"
+    DATA = "data"
+    IDENTITY = "identity"
+    CLOUD = "cloud"
+    IOT = "iot"
+    SUPPLY_CHAIN = "supply_chain"
+
+class ThreatTaxonomy:
+    """Comprehensive threat taxonomy for annotation"""
+    
+    def __init__(self):
+        self.taxonomy = self._build_taxonomy()
+        
+    def _build_taxonomy(self) -> Dict:
+        return {
+            ThreatCategory.NETWORK: {
+                "ddos": {
+                    "subtypes": [
+                        "volumetric",
+                        "protocol",
+                        "application_layer"
+                    ],
+                    "indicators": [
+                        ThreatIndicator(
+                            name="traffic_spike",
+                            pattern="traffic_volume > baseline * 10",
+                            severity_weight=0.8,
+                            false_positive_rate=0.1
+                        ),
+                        ThreatIndicator(
+                            name="source_diversity",
+                            pattern="unique_sources > 1000",
+                            severity_weight=0.7,
+                            false_positive_rate=0.05
+                        )
+                    ],
+                    "mitre_attack_id": "T1498"
+                },
+                "scanning": {
+                    "subtypes": [
+                        "port_scan",
+                        "vulnerability_scan",
+                        "network_discovery"
+                    ],
+                    "indicators": [
+                        ThreatIndicator(
+                            name="sequential_ports",
+                            pattern="port_sequence_detected",
+                            severity_weight=0.5,
+                            false_positive_rate=0.2
+                        )
+                    ],
+                    "mitre_attack_id": "T1046"
+                }
+            },
+            ThreatCategory.APPLICATION: {
+                "injection": {
+                    "subtypes": [
+                        "sql_injection",
+                        "command_injection",
+                        "ldap_injection",
+                        "xpath_injection"
+                    ],
+                    "indicators": [
+                        ThreatIndicator(
+                            name="sql_keywords",
+                            pattern="contains(SQL_KEYWORDS)",
+                            severity_weight=0.9,
+                            false_positive_rate=0.15
+                        )
+                    ],
+                    "mitre_attack_id": "T1190"
+                },
+                "xss": {
+                    "subtypes": [
+                        "reflected",
+                        "stored",
+                        "dom_based"
+                    ],
+                    "indicators": [
+                        ThreatIndicator(
+                            name="script_tags",
+                            pattern="contains('<script>')",
+                            severity_weight=0.8,
+                            false_positive_rate=0.1
+                        )
+                    ],
+                    "mitre_attack_id": "T1059"
+                }
+            }
+        }
+    
+    def get_threat_score(self, indicators: List[str]) -> float:
+        """Calculate threat score based on indicators"""
+        total_weight = 0
+        total_score = 0
+        
+        for category in self.taxonomy.values():
+            for threat_type in category.values():
+                if 'indicators' in threat_type:
+                    for indicator in threat_type['indicators']:
+                        if indicator.name in indicators:
+                            weight = indicator.severity_weight * (1 - indicator.false_positive_rate)
+                            total_weight += weight
+                            total_score += weight
+        
+        return total_score / max(total_weight, 1)
+```
+
+### MITRE ATT&CK Mapping
+
+```yaml
+# mitre_mapping.yaml
+mitre_attack_mapping:
+  tactics:
+    initial_access:
+      techniques:
+        - id: "T1190"
+          name: "Exploit Public-Facing Application"
+          annotation_labels: ["injection", "rce", "vulnerability_exploit"]
+          
+        - id: "T1133"
+          name: "External Remote Services"
+          annotation_labels: ["rdp_brute_force", "ssh_attack", "vpn_exploit"]
+    
+    execution:
+      techniques:
+        - id: "T1059"
+          name: "Command and Scripting Interpreter"
+          annotation_labels: ["command_injection", "script_execution", "powershell_abuse"]
+    
+    persistence:
+      techniques:
+        - id: "T1098"
+          name: "Account Manipulation"
+          annotation_labels: ["account_creation", "privilege_modification", "backdoor_account"]
+    
+    privilege_escalation:
+      techniques:
+        - id: "T1068"
+          name: "Exploitation for Privilege Escalation"
+          annotation_labels: ["kernel_exploit", "service_exploit", "sudo_bypass"]
+    
+    defense_evasion:
+      techniques:
+        - id: "T1070"
+          name: "Indicator Removal"
+          annotation_labels: ["log_deletion", "file_deletion", "timestamp_modification"]
+    
+    credential_access:
+      techniques:
+        - id: "T1110"
+          name: "Brute Force"
+          annotation_labels: ["password_spray", "credential_stuffing", "dictionary_attack"]
+    
+    discovery:
+      techniques:
+        - id: "T1046"
+          name: "Network Service Discovery"
+          annotation_labels: ["port_scan", "service_enumeration", "network_mapping"]
+    
+    lateral_movement:
+      techniques:
+        - id: "T1021"
+          name: "Remote Services"
+          annotation_labels: ["rdp_movement", "ssh_lateral", "smb_movement"]
+    
+    collection:
+      techniques:
+        - id: "T1005"
+          name: "Data from Local System"
+          annotation_labels: ["file_access", "data_collection", "sensitive_data_access"]
+    
+    exfiltration:
+      techniques:
+        - id: "T1041"
+          name: "Exfiltration Over C2 Channel"
+          annotation_labels: ["data_exfiltration", "c2_communication", "data_staging"]
+```
+
+## Annotation Tools & Platform
+
+### Web-Based Annotation Interface
+
+```python
+# annotation_platform/interface.py
+from flask import Flask, render_template, request, jsonify
+from datetime import datetime
+import json
+import uuid
+
+app = Flask(__name__)
+
+class AnnotationInterface:
+    """Web interface for data annotation"""
+    
+    def __init__(self):
+        self.annotations = {}
+        self.current_batch = []
+        
+    @app.route('/annotate')
+    def annotate_page(self):
+        """Main annotation interface"""
+        return render_template('annotate.html')
+    
+    @app.route('/api/get_batch', methods=['GET'])
+    def get_annotation_batch(self):
+        """Get batch of items to annotate"""
+        batch_size = request.args.get('batch_size', 10)
+        
+        # Get unannotated samples
+        batch = self.get_unannotated_samples(batch_size)
+        
+        return jsonify({
+            'batch_id': str(uuid.uuid4()),
+            'samples': batch,
+            'schema': self.get_annotation_schema()
+        })
+    
+    @app.route('/api/submit_annotation', methods=['POST'])
+    def submit_annotation(self):
+        """Submit annotation for a sample"""
+        data = request.json
+        
+        annotation = {
+            'id': str(uuid.uuid4()),
+            'timestamp': datetime.utcnow().isoformat(),
+            'annotator_id': data['annotator_id'],
+            'sample_id': data['sample_id'],
+            'labels': data['labels'],
+            'confidence': data['confidence'],
+            'time_spent': data['time_spent'],
+            'notes': data.get('notes', '')
+        }
+        
+        # Validate annotation
+        if self.validate_annotation(annotation):
+            self.save_annotation(annotation)
+            return jsonify({'status': 'success', 'annotation_id': annotation['id']})
+        else:
+            return jsonify({'status': 'error', 'message': 'Invalid annotation'}), 400
+    
+    def validate_annotation(self, annotation: dict) -> bool:
+        """Validate annotation against schema"""
+        required_fields = ['annotator_id', 'sample_id', 'labels', 'confidence']
+        
+        # Check required fields
+        for field in required_fields:
+            if field not in annotation:
+                return False
+        
+        # Validate confidence score
+        if not 0 <= annotation['confidence'] <= 1:
+            return False
+        
+        # Validate labels against schema
+        valid_labels = self.get_valid_labels()
+        for label in annotation['labels']:
+            if label not in valid_labels:
+                return False
+        
+        return True
+    
+    def calculate_inter_annotator_agreement(self, sample_ids: List[str]) -> float:
+        """Calculate Cohen's Kappa for inter-annotator agreement"""
+        from sklearn.metrics import cohen_kappa_score
+        
+        annotations_by_sample = {}
+        for sample_id in sample_ids:
+            annotations = self.get_annotations_for_sample(sample_id)
+            if len(annotations) >= 2:
+                annotations_by_sample[sample_id] = annotations
+        
+        if not annotations_by_sample:
+            return 0.0
+        
+        # Calculate pairwise agreement
+        kappa_scores = []
+        for sample_id, annotations in annotations_by_sample.items():
+            for i in range(len(annotations)):
+                for j in range(i + 1, len(annotations)):
+                    kappa = cohen_kappa_score(
+                        annotations[i]['labels'],
+                        annotations[j]['labels']
+                    )
+                    kappa_scores.append(kappa)
+        
+        return np.mean(kappa_scores) if kappa_scores else 0.0
+```
+
+### Annotation UI Template
+
+```html
+<!-- templates/annotate.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Data Annotation Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            color: #1e3c72;
+            font-size: 2em;
+        }
+        
+        .annotation-workspace {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
+        }
+        
+        .data-viewer {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .annotation-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 20px;
+        }
+        
+        .data-sample {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #1e3c72;
+        }
+        
+        .threat-level-selector {
+            margin: 20px 0;
+        }
+        
+        .threat-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .threat-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .threat-button.selected {
+            border-color: #1e3c72;
+            background: #1e3c72;
+            color: white;
+        }
+        
+        .critical { border-color: #FF0000; }
+        .high { border-color: #FF6600; }
+        .medium { border-color: #FFB300; }
+        .low { border-color: #FFD700; }
+        .benign { border-color: #00FF00; }
+        
+        .attack-type-selector {
+            margin: 20px 0;
+        }
+        
+        .attack-checkbox {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .attack-checkbox:hover {
+            background: #e9ecef;
+        }
+        
+        .confidence-slider {
+            margin: 20px 0;
+        }
+        
+        .confidence-slider input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .confidence-value {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+        
+        .notes-section textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+        
+        .action-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-skip {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .progress-bar {
+            margin: 20px 0;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .keyboard-shortcuts {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .shortcut {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+        
+        .shortcut kbd {
+            background: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Security Data Annotation Platform</h1>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress" style="width: 0%">
+                    0 / 100 Samples
+                </div>
+            </div>
+        </div>
+        
+        <div class="annotation-workspace">
+            <div class="data-viewer">
+                <h2>Data Sample</h2>
+                <div id="sampleContainer">
+                    <!-- Sample data will be loaded here -->
+                </div>
+            </div>
+            
+            <div class="annotation-panel">
+                <h3>Annotation Panel</h3>
+                
+                <div class="threat-level-selector">
+                    <h4>Threat Level</h4>
+                    <button class="threat-button critical" data-level="critical">Critical</button>
+                    <button class="threat-button high" data-level="high">High</button>
+                    <button class="threat-button medium" data-level="medium">Medium</button>
+                    <button class="threat-button low" data-level="low">Low</button>
+                    <button class="threat-button benign" data-level="benign">Benign</button>
+                </div>
+                
+                <div class="attack-type-selector">
+                    <h4>Attack Types</h4>
+                    <label class="attack-checkbox">
+                        <input type="checkbox" value="ddos"> DDoS Attack
+                    </label>
+                    <label class="attack-checkbox">
+                        <input type="checkbox" value="sql_injection"> SQL Injection
+                    </label>
+                    <label class="attack-checkbox">
+                        <input type="checkbox" value="xss"> Cross-Site Scripting
+                    </label>
+                    <label class="attack-checkbox">
+                        <input type="checkbox" value="brute_force"> Brute Force
+                    </label>
+                    <label class="attack-checkbox">
+                        <input type="checkbox" value="malware"> Malware
+                    </label>
+                    <label class="attack-checkbox">
+                        <input type="checkbox" value="data_exfiltration"> Data Exfiltration
+                    </label>
+                </div>
+                
+                <div class="confidence-slider">
+                    <h4>Confidence Score</h4>
+                    <input type="range" id="confidence" min="0" max="100" value="80">
+                    <div class="confidence-value" id="confidenceValue">80%</div>
+                </div>
+                
+                <div class="notes-section">
+                    <h4>Notes (Optional)</h4>
+                    <textarea id="notes" placeholder="Add any additional observations..."></textarea>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="submitAnnotation()">Submit</button>
+                    <button class="btn btn-skip" onclick="skipSample()">Skip</button>
+                    <button class="btn btn-secondary" onclick="flagForReview()">Flag</button>
+                </div>
+                
+                <div class="keyboard-shortcuts">
+                    <h4>Keyboard Shortcuts</h4>
+                    <div class="shortcut">
+                        <span>Submit</span>
+                        <kbd>Enter</kbd>
+                    </div>
+                    <div class="shortcut">
+                        <span>Skip</span>
+                        <kbd>S</kbd>
+                    </div>
+                    <div class="shortcut">
+                        <span>Flag for Review</span>
+                        <kbd>F</kbd>
+                    </div>
+                    <div class="shortcut">
+                        <span>Critical</span>
+                        <kbd>1</kbd>
+                    </div>
+                    <div class="shortcut">
+                        <span>High</span>
+                        <kbd>2</kbd>
+                    </div>
+                    <div class="shortcut">
+                        <span>Medium</span>
+                        <kbd>3</kbd>
+                    </div>
+                    <div class="shortcut">
+                        <span>Low</span>
+                        <kbd>4</kbd>
+                    </div>
+                    <div class="shortcut">
+                        <span>Benign</span>
+                        <kbd>5</kbd>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentSample = null;
+        let annotationCount = 0;
+        let totalSamples = 100;
+        let startTime = Date.now();
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadNextSample();
+            setupEventListeners();
+            setupKeyboardShortcuts();
+        });
+        
+        function loadNextSample() {
+            // Simulate loading sample data
+            fetch('/api/get_batch?batch_size=1')
+                .then(response => response.json())
+                .then(data => {
+                    currentSample = data.samples[0];
+                    displaySample(currentSample);
+                })
+                .catch(error => {
+                    console.error('Error loading sample:', error);
+                    // Use mock data for demo
+                    currentSample = generateMockSample();
+                    displaySample(currentSample);
+                });
+        }
+        
+        function generateMockSample() {
+            return {
+                id: 'sample_' + Math.random().toString(36).substr(2, 9),
+                timestamp: new Date().toISOString(),
+                source_ip: '192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255),
+                destination_ip: '10.0.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255),
+                protocol: ['TCP', 'UDP', 'HTTP', 'HTTPS'][Math.floor(Math.random() * 4)],
+                payload: btoa(Math.random().toString(36).substring(7)),
+                flags: {
+                    syn: Math.random() > 0.5,
+                    ack: Math.random() > 0.5,
+                    fin: Math.random() > 0.5
+                },
+                metrics: {
+                    packet_size: Math.floor(Math.random() * 1500),
+                    frequency: Math.floor(Math.random() * 1000),
+                    duration: Math.floor(Math.random() * 3600)
+                }
+            };
+        }
+        
+        function displaySample(sample) {
+            const container = document.getElementById('sampleContainer');
+            container.innerHTML = `
+                <div class="data-sample">
+                    <h3>Sample ID: ${sample.id}</h3>
+                    <p><strong>Timestamp:</strong> ${sample.timestamp}</p>
+                    <p><strong>Source IP:</strong> ${sample.source_ip}</p>
+                    <p><strong>Destination IP:</strong> ${sample.destination_ip}</p>
+                    <p><strong>Protocol:</strong> ${sample.protocol}</p>
+                    <p><strong>Payload:</strong> <code>${sample.payload}</code></p>
+                    <p><strong>Flags:</strong> SYN=${sample.flags.syn}, ACK=${sample.flags.ack}, FIN=${sample.flags.fin}</p>
+                    <p><strong>Packet Size:</strong> ${sample.metrics.packet_size} bytes</p>
+                    <p><strong>Frequency:</strong> ${sample.metrics.frequency} packets/sec</p>
+                    <p><strong>Duration:</strong> ${sample.metrics.duration} seconds</p>
+                </div>
+            `;
+            
+            // Reset annotation form
+            resetAnnotationForm();
+        }
+        
+        function resetAnnotationForm() {
+            // Clear threat level selection
+            document.querySelectorAll('.threat-button').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Clear attack type checkboxes
+            document.querySelectorAll('.attack-checkbox input').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Reset confidence slider
+            document.getElementById('confidence').value = 80;
+            document.getElementById('confidenceValue').textContent = '80%';
+            
+            // Clear notes
+            document.getElementById('notes').value = '';
+        }
+        
+        function setupEventListeners() {
+            // Threat level buttons
+            document.querySelectorAll('.threat-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.threat-button').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                });
+            });
+            
+            // Confidence slider
+            document.getElementById('confidence').addEventListener('input', function() {
+                document.getElementById('confidenceValue').textContent = this.value + '%';
+            });
+        }
+        
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                switch(e.key) {
+                    case 'Enter':
+                        if (!e.shiftKey) {
+                            e.preventDefault();
+                            submitAnnotation();
+                        }
+                        break;
+                    case 's':
+                    case 'S':
+                        skipSample();
+                        break;
+                    case 'f':
+                    case 'F':
+                        flagForReview();
+                        break;
+                    case '1':
+                        selectThreatLevel('critical');
+                        break;
+                    case '2':
+                        selectThreatLevel('high');
+                        break;
+                    case '3':
+                        selectThreatLevel('medium');
+                        break;
+                    case '4':
+                        selectThreatLevel('low');
+                        break;
+                    case '5':
+                        selectThreatLevel('benign');
+                        break;
+                }
+            });
+        }
+        
+        function selectThreatLevel(level) {
+            document.querySelectorAll('.threat-button').forEach(btn => {
+                btn.classList.remove('selected');
+                if (btn.dataset.level === level) {
+                    btn.classList.add('selected');
+                }
+            });
+        }
+        
+        function submitAnnotation() {
+            // Gather annotation data
+            const selectedThreat = document.querySelector('.threat-button.selected');
+            if (!selectedThreat) {
+                alert('Please select a threat level');
+                return;
+            }
+            
+            const attackTypes = [];
+            document.querySelectorAll('.attack-checkbox input:checked').forEach(checkbox => {
+                attackTypes.push(checkbox.value);
+            });
+            
+            const annotation = {
+                sample_id: currentSample.id,
+                annotator_id: 'user_001', // In production, get from session
+                labels: {
+                    threat_level: selectedThreat.dataset.level,
+                    attack_types: attackTypes
+                },
+                confidence: document.getElementById('confidence').value / 100,
+                notes: document.getElementById('notes').value,
+                time_spent: Math.round((Date.now() - startTime) / 1000)
+            };
+            
+            // Submit to backend
+            fetch('/api/submit_annotation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(annotation)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Annotation submitted:', data);
+            })
+            .catch(error => {
+                console.error('Error submitting annotation:', error);
+            });
+            
+            // Update progress
+            annotationCount++;
+            updateProgress();
+            
+            // Load next sample
+            startTime = Date.now();
+            loadNextSample();
+        }
+        
+        function skipSample() {
+            if (confirm('Are you sure you want to skip this sample?')) {
+                loadNextSample();
+            }
+        }
+        
+        function flagForReview() {
+            const reason = prompt('Please provide a reason for flagging this sample:');
+            if (reason) {
+                console.log('Sample flagged for review:', currentSample.id, reason);
+                loadNextSample();
+            }
+        }
+        
+        function updateProgress() {
+            const progress = document.getElementById('progress');
+            const percentage = (annotationCount / totalSamples) * 100;
+            progress.style.width = percentage + '%';
+            progress.textContent = `${annotationCount} / ${totalSamples} Samples`;
+        }
+    </script>
+</body>
+</html>
+```
+
+## Quality Control Process
+
+### Automated Quality Checks
+
+```python
+# quality_control/qa_system.py
+import numpy as np
+from typing import Dict, List, Tuple
+import pandas as pd
+from scipy import stats
+
+class QualityAssuranceSystem:
+    """Automated quality control for annotations"""
+    
+    def __init__(self, config: Dict):
+        self.config = config
+        self.min_agreement = config.get('min_agreement', 0.8)
+        self.confidence_threshold = config.get('confidence_threshold', 0.6)
+        
+    def check_annotation_quality(self, annotation: Dict) -> Tuple[bool, List[str]]:
+        """Check quality of individual annotation"""
+        issues = []
+        
+        # Check confidence score
+        if annotation['confidence'] < self.confidence_threshold:
+            issues.append(f"Low confidence: {annotation['confidence']}")
+        
+        # Check annotation time (too fast or too slow)
+        time_spent = annotation.get('time_spent', 0)
+        if time_spent < 5:
+            issues.append("Annotation completed too quickly")
+        elif time_spent > 300:
+            issues.append("Annotation took unusually long")
+        
+        # Check label consistency
+        if not self.check_label_consistency(annotation):
+            issues.append("Inconsistent labels detected")
+        
+        # Check for missing required fields
+        required_fields = ['threat_level', 'attack_types']
+        for field in required_fields:
+            if field not in annotation.get('labels', {}):
+                issues.append(f"Missing required field: {field}")
+        
+        return len(issues) == 0, issues
+    
+    def check_label_consistency(self, annotation: Dict) -> bool:
+        """Check if labels are logically consistent"""
+        labels = annotation.get('labels', {})
+        threat_level = labels.get('threat_level')
+        attack_types = labels.get('attack_types', [])
+        
+        # Benign samples shouldn't have attack types
+        if threat_level == 'benign' and len(attack_types) > 0:
+            return False
+        
+        # Critical threats should have attack types
+        if threat_level == 'critical' and len(attack_types) == 0:
+            return False
+        
+        return True
+    
+    def calculate_annotator_performance(self, annotator_id: str) -> Dict:
+        """Calculate performance metrics for an annotator"""
+        annotations = self.get_annotator_annotations(annotator_id)
+        
+        metrics = {
+            'total_annotations': len(annotations),
+            'average_confidence': np.mean([a['confidence'] for a in annotations]),
+            'average_time': np.mean([a['time_spent'] for a in annotations]),
+            'agreement_rate': self.calculate_agreement_rate(annotator_id),
+            'quality_score': 0
+        }
+        
+        # Calculate quality score
+        quality_factors = [
+            metrics['agreement_rate'],
+            min(metrics['average_confidence'] / 0.8, 1.0),
+            1.0 if 10 <= metrics['average_time'] <= 60 else 0.5
+        ]
+        metrics['quality_score'] = np.mean(quality_factors)
+        
+        return metrics
+    
+    def identify_difficult_samples(self, threshold: float = 0.5) -> List[str]:
+        """Identify samples with low annotator agreement"""
+        sample_agreements = {}
+        
+        for sample_id in self.get_all_sample_ids():
+            annotations = self.get_sample_annotations(sample_id)
+            
+            if len(annotations) >= 2:
+                agreement = self.calculate_sample_agreement(annotations)
+                if agreement < threshold:
+                    sample_agreements[sample_id] = agreement
+        
+        # Sort by agreement (lowest first)
+        difficult_samples = sorted(sample_agreements.items(), key=lambda x: x[1])
+        
+        return [sample_id for sample_id, _ in difficult_samples]
+    
+    def generate_quality_report(self) -> Dict:
+        """Generate comprehensive quality report"""
+        report = {
+            'timestamp': datetime.utcnow().isoformat(),
+            'total_annotations': self.get_total_annotations(),
+            'total_annotators': self.get_total_annotators(),
+            'overall_agreement': self.calculate_overall_agreement(),
+            'label_distribution': self.calculate_label_distribution(),
+            'annotator_performance': {},
+            'difficult_samples': self.identify_difficult_samples(),
+            'recommendations': []
+        }
+        
+        # Add annotator performance
+        for annotator_id in self.get_all_annotators():
+            report['annotator_performance'][annotator_id] = \
+                self.calculate_annotator_performance(annotator_id)
+        
+        # Generate recommendations
+        if report['overall_agreement'] < 0.7:
+            report['recommendations'].append(
+                "Overall agreement is low. Consider additional training."
+            )
+        
+        if len(report['difficult_samples']) > 100:
+            report['recommendations'].append(
+                "Many difficult samples detected. Review annotation guidelines."
+            )
+        
+        return report
+```
+
+## Annotation Workflows
+
+### Active Learning Pipeline
+
+```python
+# workflows/active_learning.py
+import torch
+import numpy as np
+from typing import List, Dict, Tuple
+
+class ActiveLearningPipeline:
+    """Active learning for efficient annotation"""
+    
+    def __init__(self, model, config: Dict):
+        self.model = model
+        self.config = config
+        self.strategy = config.get('strategy', 'uncertainty')
+        
+    def select_samples_for_annotation(self, 
+                                     unlabeled_data: List,
+                                     budget: int) -> List:
+        """Select most informative samples for annotation"""
+        
+        if self.strategy == 'uncertainty':
+            return self.uncertainty_sampling(unlabeled_data, budget)
+        elif self.strategy == 'diversity':
+            return self.diversity_sampling(unlabeled_data, budget)
+        elif self.strategy == 'hybrid':
+            return self.hybrid_sampling(unlabeled_data, budget)
+        else:
+            raise ValueError(f"Unknown strategy: {self.strategy}")
+    
+    def uncertainty_sampling(self, data: List, budget: int) -> List:
+        """Select samples with highest prediction uncertainty"""
+        uncertainties = []
+        
+        self.model.eval()
+        with torch.no_grad():
+            for sample in data:
+                # Get model predictions
+                output = self.model(sample)
+                probs = torch.softmax(output, dim=-1)
+                
+                # Calculate uncertainty (entropy)
+                entropy = -torch.sum(probs * torch.log(probs + 1e-10))
+                uncertainties.append(entropy.item())
+        
+        # Select top uncertain samples
+        indices = np.argsort(uncertainties)[-budget:]
+        return [data[i] for i in indices]
+    
+    def diversity_sampling(self, data: List, budget: int) -> List:
+        """Select diverse samples using clustering"""
+        from sklearn.cluster import KMeans
+        
+        # Extract features
+        features = []
+        self.model.eval()
+        with torch.no_grad():
+            for sample in data:
+                # Get model embeddings
+                embedding = self.model.get_embedding(sample)
+                features.append(embedding.numpy())
+        
+        features = np.array(features)
+        
+        # Cluster samples
+        kmeans = KMeans(n_clusters=budget, random_state=42)
+        kmeans.fit(features)
+        
+        # Select samples closest to cluster centers
+        selected = []
+        for center in kmeans.cluster_centers_:
+            distances = np.linalg.norm(features - center, axis=1)
+            closest_idx = np.argmin(distances)
+            selected.append(data[closest_idx])
+        
+        return selected
+    
+    def hybrid_sampling(self, data: List, budget: int) -> List:
+        """Combine uncertainty and diversity sampling"""
+        # First, select 2x budget using uncertainty
+        uncertain_samples = self.uncertainty_sampling(data, budget * 2)
+        
+        # Then, select final budget using diversity
+        diverse_samples = self.diversity_sampling(uncertain_samples, budget)
+        
+        return diverse_samples
+```
+
+## Data Privacy & Compliance
+
+### Privacy-Preserving Annotation
+
+```python
+# privacy/data_anonymization.py
+import hashlib
+import re
+from typing import Dict, Any
+from cryptography.fernet import Fernet
+
+class PrivacyPreservingAnnotation:
+    """Ensure data privacy during annotation"""
+    
+    def __init__(self, config: Dict):
+        self.config = config
+        self.encryption_key = Fernet.generate_key()
+        self.cipher = Fernet(self.encryption_key)
+        
+    def anonymize_data(self, data: Dict) -> Dict:
+        """Anonymize sensitive information"""
+        anonymized = data.copy()
+        
+        # Anonymize IP addresses
+        if 'ip_address' in anonymized:
+            anonymized['ip_address'] = self.anonymize_ip(anonymized['ip_address'])
+        
+        # Anonymize user identifiers
+        if 'user_id' in anonymized:
+            anonymized['user_id'] = self.hash_identifier(anonymized['user_id'])
+        
+        # Remove or mask PII
+        if 'email' in anonymized:
+            anonymized['email'] = self.mask_email(anonymized['email'])
+        
+        if 'name' in anonymized:
+            anonymized['name'] = 'REDACTED'
+        
+        # Encrypt sensitive fields
+        sensitive_fields = self.config.get('sensitive_fields', [])
+        for field in sensitive_fields:
+            if field in anonymized:
+                anonymized[field] = self.encrypt_field(anonymized[field])
+        
+        return anonymized
+    
+    def anonymize_ip(self, ip: str) -> str:
+        """Anonymize IP address while preserving structure"""
+        parts = ip.split('.')
+        if len(parts) == 4:
+            # Keep first two octets, anonymize last two
+            return f"{parts[0]}.{parts[1]}.XXX.XXX"
+        return "XXX.XXX.XXX.XXX"
+    
+    def hash_identifier(self, identifier: str) -> str:
+        """Hash identifier for consistency"""
+        return hashlib.sha256(identifier.encode()).hexdigest()[:16]
+    
+    def mask_email(self, email: str) -> str:
+        """Mask email address"""
+        parts = email.split('@')
+        if len(parts) == 2:
+            username = parts[0]
+            domain = parts[1]
+            masked_username = username[0] + '*' * (len(username) - 2) + username[-1]
+            return f"{masked_username}@{domain}"
+        return "***@***.***"
+    
+    def encrypt_field(self, value: Any) -> str:
+        """Encrypt sensitive field"""
+        if not isinstance(value, bytes):
+            value = str(value).encode()
+        return self.cipher.encrypt(value).decode()
+    
+    def decrypt_field(self, encrypted_value: str) -> str:
+        """Decrypt sensitive field"""
+        return self.cipher.decrypt(encrypted_value.encode()).decode()
+    
+    def generate_compliance_report(self) -> Dict:
+        """Generate GDPR/CCPA compliance report"""
+        return {
+            'compliance_standards': ['GDPR', 'CCPA', 'HIPAA'],
+            'data_retention_days': 90,
+            'anonymization_methods': [
+                'IP address masking',
+                'Identifier hashing',
+                'PII removal',
+                'Field encryption'
+            ],
+            'access_controls': [
+                'Role-based access',
+                'Audit logging',
+                'Data encryption at rest',
+                'Data encryption in transit'
+            ],
+            'user_rights': [
+                'Right to access',
+                'Right to deletion',
+                'Right to rectification',
+                'Right to portability'
+            ]
+        }
+```
+
+## Performance Metrics
+
+### Annotation Metrics Dashboard
+
+```python
+# metrics/dashboard.py
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import pandas as pd
+from datetime import datetime, timedelta
+
+class AnnotationMetricsDashboard:
+    """Real-time metrics dashboard for annotation progress"""
+    
+    def __init__(self):
+        self.metrics = {
+            'daily_annotations': [],
+            'annotator_performance': {},
+            'label_distribution': {},
+            'quality_scores': []
+        }
+    
+    def generate_dashboard(self) -> str:
+        """Generate interactive dashboard HTML"""
+        fig = make_subplots(
+            rows=2, cols=2,
+            subplot_titles=('Daily Annotation Progress', 
+                          'Label Distribution',
+                          'Annotator Performance', 
+                          'Quality Scores Over Time'),
+            specs=[[{'type': 'scatter'}, {'type': 'pie'}],
+                   [{'type': 'bar'}, {'type': 'scatter'}]]
+        )
+        
+        # Daily annotation progress
+        dates = pd.date_range(end=datetime.now(), periods=30)
+        daily_counts = np.random.poisson(100, 30)
+        
+        fig.add_trace(
+            go.Scatter(x=dates, y=daily_counts, mode='lines+markers',
+                      name='Annotations', line=dict(color='#1e3c72')),
+            row=1, col=1
+        )
+        
+        # Label distribution
+        labels = ['Critical', 'High', 'Medium', 'Low', 'Benign']
+        values = [5, 15, 30, 35, 15]
+        colors = ['#FF0000', '#FF6600', '#FFB300', '#FFD700', '#00FF00']
+        
+        fig.add_trace(
+            go.Pie(labels=labels, values=values, 
+                   marker=dict(colors=colors)),
+            row=1, col=2
+        )
+        
+        # Annotator performance
+        annotators = ['User1', 'User2', 'User3', 'User4', 'User5']
+        performance = [0.92, 0.88, 0.95, 0.85, 0.90]
+        
+        fig.add_trace(
+            go.Bar(x=annotators, y=performance, 
+                   marker_color='#2a5298'),
+            row=2, col=1
+        )
+        
+        # Quality scores over time
+        quality_dates = pd.date_range(end=datetime.now(), periods=30)
+        quality_scores = np.random.uniform(0.7, 0.95, 30)
+        
+        fig.add_trace(
+            go.Scatter(x=quality_dates, y=quality_scores,
+                      mode='lines', name='Quality',
+                      line=dict(color='#28a745')),
+            row=2, col=2
+        )
+        
+        # Update layout
+        fig.update_layout(
+            height=800,
+            showlegend=False,
+            title_text="Annotation Metrics Dashboard",
+            title_font_size=24
+        )
+        
+        return fig.to_html()
+    
+    def calculate_metrics(self) -> Dict:
+        """Calculate comprehensive annotation metrics"""
+        return {
+            'total_annotations': sum(self.metrics['daily_annotations']),
+            'average_daily_rate': np.mean(self.metrics['daily_annotations']),
+            'active_annotators': len(self.metrics['annotator_performance']),
+            'overall_quality': np.mean(self.metrics['quality_scores']),
+            'completion_rate': self.calculate_completion_rate(),
+            'estimated_completion_date': self.estimate_completion_date()
+        }
+    
+    def calculate_completion_rate(self) -> float:
+        """Calculate project completion rate"""
+        total_required = 100000  # Example target
+        total_completed = sum(self.metrics['daily_annotations'])
+        return (total_completed / total_required) * 100
+    
+    def estimate_completion_date(self) -> datetime:
+        """Estimate project completion date"""
+        daily_rate = np.mean(self.metrics['daily_annotations'][-7:])
+        remaining = 100000 - sum(self.metrics['daily_annotations'])
+        days_remaining = remaining / daily_rate
+        
+        return datetime.now() + timedelta(days=days_remaining)
+```

@@ -1,0 +1,1546 @@
+# CyberFortress API Documentation v1.0
+## Enterprise Integration Guide
+
+---
+
+## Table of Contents
+
+1. [Getting Started](#getting-started)
+2. [Authentication](#authentication)
+3. [REST API](#rest-api)
+4. [WebSocket API](#websocket-api)
+5. [GraphQL API](#graphql-api)
+6. [Blockchain API](#blockchain-api)
+7. [Webhooks](#webhooks)
+8. [SDKs & Libraries](#sdks--libraries)
+9. [Rate Limiting](#rate-limiting)
+10. [Error Handling](#error-handling)
+11. [Integration Examples](#integration-examples)
+12. [Best Practices](#best-practices)
+
+---
+
+## Getting Started
+
+### Base URLs
+
+```
+Production:  https://api.cyberfortress.io/v1
+Staging:     https://api-staging.cyberfortress.io/v1
+WebSocket:   wss://stream.cyberfortress.io/v1
+GraphQL:     https://graphql.cyberfortress.io/v1
+```
+
+### API Versioning
+
+All API endpoints are versioned. The current version is `v1`. Version is included in the URL path.
+
+```http
+GET https://api.cyberfortress.io/v1/threats
+```
+
+### Required Headers
+
+```http
+Content-Type: application/json
+Accept: application/json
+X-API-Version: 1.0
+X-Client-Version: your-app/1.0.0
+```
+
+---
+
+## Authentication
+
+### API Key Authentication
+
+```http
+Authorization: Bearer YOUR_API_KEY
+```
+
+### OAuth 2.0 Flow
+
+```http
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+scope=threats:read threats:write monitoring:admin
+```
+
+**Response:**
+```json
+{
+  "access_token": "eyJhbGciOiJSUzI1NiIs...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "8xLOxBtZp8...",
+  "scope": "threats:read threats:write monitoring:admin"
+}
+```
+
+### API Key Management
+
+```http
+POST /api-keys
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+{
+  "name": "Production Integration",
+  "permissions": ["threats:read", "monitoring:write"],
+  "expires_at": "2025-12-31T23:59:59Z",
+  "ip_whitelist": ["192.168.1.0/24"]
+}
+```
+
+**Response:**
+```json
+{
+  "api_key": "cf_live_aX7Kj9mN2pQ8rS5tU3vW1yZ",
+  "key_id": "key_1a2b3c4d5e6f",
+  "created_at": "2025-01-15T10:00:00Z",
+  "expires_at": "2025-12-31T23:59:59Z"
+}
+```
+
+---
+
+## REST API
+
+### Threat Management
+
+#### List Threats
+
+```http
+GET /threats
+```
+
+**Query Parameters:**
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `severity` | string | Filter by severity: `low`, `medium`, `high`, `critical` |
+| `status` | string | Filter by status: `active`, `mitigated`, `investigating` |
+| `ip` | string | Filter by IP address |
+| `country` | string | Filter by country code (ISO 3166-1 alpha-2) |
+| `from` | datetime | Start date (ISO 8601) |
+| `to` | datetime | End date (ISO 8601) |
+| `limit` | integer | Results per page (max: 100, default: 20) |
+| `offset` | integer | Pagination offset |
+| `sort` | string | Sort by: `score`, `timestamp`, `severity` |
+| `order` | string | Sort order: `asc`, `desc` |
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": "threat_7h8i9j0k",
+      "ip_address": "192.168.1.100",
+      "threat_score": 85,
+      "threat_level": "CRITICAL",
+      "detected_at": "2025-01-15T14:30:00Z",
+      "country": {
+        "code": "CN",
+        "name": "China",
+        "city": "Beijing"
+      },
+      "threat_intelligence": {
+        "sources": ["AbuseIPDB", "Shodan", "GreyNoise"],
+        "categories": ["C2", "Malware", "Scanner"],
+        "confidence": 0.92,
+        "reputation_score": 12
+      },
+      "process_behavior": {
+        "process_name": "suspicious.exe",
+        "process_id": 4532,
+        "network_pattern": "BEACONING",
+        "anomaly_score": 78,
+        "is_baseline": false
+      },
+      "ml_analysis": {
+        "anomaly_score": 82,
+        "model_confidence": 0.89,
+        "models_triggered": ["temporal", "behavioral", "geographic"]
+      },
+      "automated_response": {
+        "actions_taken": ["BLOCK_IP", "QUARANTINE_PROCESS"],
+        "response_time_ms": 47
+      }
+    }
+  ],
+  "pagination": {
+    "total": 1247,
+    "limit": 20,
+    "offset": 0,
+    "has_more": true
+  }
+}
+```
+
+#### Get Threat Details
+
+```http
+GET /threats/{threat_id}
+```
+
+**Response:**
+```json
+{
+  "id": "threat_7h8i9j0k",
+  "ip_address": "192.168.1.100",
+  "threat_score": 85,
+  "threat_level": "CRITICAL",
+  "full_analysis": {
+    "threat_intelligence": { ... },
+    "process_behavior": { ... },
+    "ml_analysis": { ... },
+    "network_analysis": {
+      "connections": [...],
+      "data_exfiltration_risk": 0.73,
+      "lateral_movement_detected": true
+    },
+    "evidence": {
+      "memory_dump": "evidence_m3m0ry_dump_id",
+      "network_capture": "evidence_n3tw0rk_id",
+      "process_tree": "evidence_pr0c3ss_id"
+    }
+  },
+  "timeline": [
+    {
+      "timestamp": "2025-01-15T14:30:00Z",
+      "event": "Initial detection",
+      "severity": "HIGH"
+    },
+    {
+      "timestamp": "2025-01-15T14:30:02Z",
+      "event": "ML anomaly confirmed",
+      "severity": "CRITICAL"
+    }
+  ]
+}
+```
+
+#### Report Threat
+
+```http
+POST /threats
+```
+
+**Request Body:**
+```json
+{
+  "ip_address": "203.0.113.42",
+  "threat_type": "C2_COMMUNICATION",
+  "confidence": 0.85,
+  "evidence": {
+    "process_name": "malware.exe",
+    "process_id": 1234,
+    "network_activity": {
+      "destination_port": 443,
+      "bytes_sent": 10240,
+      "connection_duration": 3600
+    }
+  },
+  "context": {
+    "detection_source": "endpoint_agent",
+    "hostname": "WORKSTATION-01"
+  }
+}
+```
+
+#### Update Threat Status
+
+```http
+PATCH /threats/{threat_id}
+```
+
+**Request Body:**
+```json
+{
+  "status": "mitigated",
+  "resolution": "IP blocked at firewall",
+  "notes": "False positive confirmed after investigation"
+}
+```
+
+### Monitoring Control
+
+#### Get Monitoring Status
+
+```http
+GET /monitoring/status
+```
+
+**Response:**
+```json
+{
+  "mode": "ENTERPRISE",
+  "engines": {
+    "threat_detection": "active",
+    "network_monitor": "active",
+    "process_analyzer": "active",
+    "ml_engine": "active",
+    "crypto_guardian": "active",
+    "response_engine": "active"
+  },
+  "statistics": {
+    "uptime_seconds": 864000,
+    "threats_detected": 1247,
+    "threats_blocked": 892,
+    "false_positives": 23,
+    "connections_analyzed": 4829384
+  },
+  "performance": {
+    "cpu_usage": 12.4,
+    "memory_usage_mb": 487,
+    "analysis_latency_ms": 23
+  }
+}
+```
+
+#### Change Monitoring Mode
+
+```http
+PUT /monitoring/mode
+```
+
+**Request Body:**
+```json
+{
+  "mode": "DEEP_SCAN",
+  "options": {
+    "scan_interval": 10,
+    "ml_enabled": true,
+    "auto_response": true,
+    "personal_monitoring": false
+  }
+}
+```
+
+**Available Modes:**
+- `STANDARD` - Basic monitoring with threat intelligence
+- `DEEP_SCAN` - Comprehensive analysis (resource intensive)
+- `PERSONAL` - Privacy-focused monitoring
+- `ENTERPRISE` - All features enabled
+- `ML_MODE` - Machine learning anomaly detection
+- `AUTO_RESPONSE` - Automated threat mitigation
+
+### Evidence Collection
+
+#### Retrieve Evidence
+
+```http
+GET /evidence/{evidence_id}
+```
+
+**Response:**
+```json
+{
+  "id": "evidence_m3m0ry_dump_id",
+  "type": "MEMORY_DUMP",
+  "threat_id": "threat_7h8i9j0k",
+  "collected_at": "2025-01-15T14:30:05Z",
+  "hash": "sha256:a7f5f35426df32b42e7c89f921a3c6e7b8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3",
+  "size_bytes": 104857600,
+  "chain_of_custody": [
+    {
+      "timestamp": "2025-01-15T14:30:05Z",
+      "action": "Collected",
+      "system": "CyberFortress Agent v4.0",
+      "hash": "sha256:a7f5f35426df32b42e7c89f921a3c6e7b8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3"
+    }
+  ],
+  "download_url": "https://evidence.cyberfortress.io/secure/download/evidence_m3m0ry_dump_id",
+  "expires_at": "2025-01-15T15:30:05Z"
+}
+```
+
+### System Management
+
+#### Network Blocking
+
+```http
+POST /network/block
+```
+
+**Request Body:**
+```json
+{
+  "targets": [
+    {
+      "type": "ip",
+      "value": "203.0.113.42"
+    },
+    {
+      "type": "cidr",
+      "value": "198.51.100.0/24"
+    },
+    {
+      "type": "domain",
+      "value": "malicious-domain.com"
+    }
+  ],
+  "duration": "24h",
+  "reason": "C2 communication detected",
+  "auto_unblock": true
+}
+```
+
+#### Process Management
+
+```http
+POST /processes/quarantine
+```
+
+**Request Body:**
+```json
+{
+  "process_id": 4532,
+  "process_name": "suspicious.exe",
+  "action": "TERMINATE_AND_QUARANTINE",
+  "collect_memory_dump": true
+}
+```
+
+---
+
+## WebSocket API
+
+### Real-time Threat Stream
+
+```javascript
+const ws = new WebSocket('wss://stream.cyberfortress.io/v1/threats');
+
+ws.onopen = () => {
+  // Authenticate
+  ws.send(JSON.stringify({
+    type: 'auth',
+    token: 'YOUR_API_TOKEN'
+  }));
+  
+  // Subscribe to threat events
+  ws.send(JSON.stringify({
+    type: 'subscribe',
+    channels: ['threats', 'critical_alerts', 'crypto_threats'],
+    filters: {
+      severity: ['high', 'critical'],
+      countries: ['CN', 'RU', 'KP']
+    }
+  }));
+};
+
+ws.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  
+  switch(data.type) {
+    case 'threat_detected':
+      console.log('New threat:', data.threat);
+      break;
+      
+    case 'critical_alert':
+      console.log('CRITICAL:', data.alert);
+      break;
+      
+    case 'crypto_threat':
+      console.log('Crypto threat:', data.threat);
+      break;
+      
+    case 'status_update':
+      console.log('Status:', data.status);
+      break;
+  }
+};
+```
+
+### WebSocket Event Types
+
+| Event Type | Description |
+|------------|-------------|
+| `threat_detected` | New threat identified |
+| `critical_alert` | Critical security event |
+| `threat_mitigated` | Threat successfully blocked |
+| `crypto_threat` | Blockchain/wallet threat |
+| `ml_anomaly` | ML model detected anomaly |
+| `auto_response` | Automated action taken |
+| `system_status` | System health update |
+| `evidence_collected` | New evidence available |
+
+### WebSocket Commands
+
+```javascript
+// Change monitoring mode
+ws.send(JSON.stringify({
+  type: 'command',
+  action: 'set_mode',
+  params: {
+    mode: 'DEEP_SCAN'
+  }
+}));
+
+// Request immediate scan
+ws.send(JSON.stringify({
+  type: 'command',
+  action: 'scan_now',
+  params: {
+    target: '192.168.1.0/24'
+  }
+}));
+
+// Emergency shutdown
+ws.send(JSON.stringify({
+  type: 'command',
+  action: 'emergency_block_all'
+}));
+```
+
+---
+
+## GraphQL API
+
+### Endpoint
+
+```
+https://graphql.cyberfortress.io/v1
+```
+
+### Schema
+
+```graphql
+type Query {
+  # Threat queries
+  threats(
+    filter: ThreatFilter
+    pagination: PaginationInput
+    sort: SortInput
+  ): ThreatConnection!
+  
+  threat(id: ID!): Threat
+  
+  # Monitoring queries
+  monitoringStatus: MonitoringStatus!
+  
+  systemMetrics(
+    timeRange: TimeRangeInput!
+  ): Metrics!
+  
+  # Crypto queries
+  cryptoThreats(
+    chain: BlockchainType!
+    address: String
+  ): [CryptoThreat!]!
+  
+  # Evidence queries
+  evidence(threatId: ID!): [Evidence!]!
+}
+
+type Mutation {
+  # Monitoring control
+  setMonitoringMode(
+    mode: MonitoringMode!
+    options: MonitoringOptions
+  ): MonitoringStatus!
+  
+  # Threat management
+  updateThreatStatus(
+    id: ID!
+    status: ThreatStatus!
+    notes: String
+  ): Threat!
+  
+  # Network control
+  blockIP(
+    ip: String!
+    duration: String
+    reason: String!
+  ): BlockResult!
+  
+  # Process control
+  quarantineProcess(
+    processId: Int!
+    collectDump: Boolean
+  ): QuarantineResult!
+  
+  # Crypto operations
+  scanSmartContract(
+    chain: BlockchainType!
+    address: String!
+  ): ContractAnalysis!
+  
+  scanTransaction(
+    chain: BlockchainType!
+    txHash: String!
+  ): TransactionAnalysis!
+}
+
+type Subscription {
+  threatDetected(
+    severity: [ThreatSeverity!]
+  ): Threat!
+  
+  criticalAlert: Alert!
+  
+  cryptoAlert(
+    chains: [BlockchainType!]
+  ): CryptoAlert!
+  
+  systemMetrics: Metrics!
+}
+```
+
+### GraphQL Examples
+
+#### Complex Query
+
+```graphql
+query GetHighRiskThreats {
+  threats(
+    filter: {
+      severity: [HIGH, CRITICAL]
+      dateRange: {
+        from: "2025-01-01T00:00:00Z"
+        to: "2025-01-15T23:59:59Z"
+      }
+      countries: ["CN", "RU"]
+    }
+    pagination: {
+      limit: 50
+      offset: 0
+    }
+    sort: {
+      field: THREAT_SCORE
+      order: DESC
+    }
+  ) {
+    edges {
+      node {
+        id
+        ipAddress
+        threatScore
+        threatLevel
+        detectedAt
+        threatIntelligence {
+          sources
+          categories
+          confidence
+        }
+        mlAnalysis {
+          anomalyScore
+          modelsTriggered
+        }
+        automatedResponse {
+          actionsTaken
+          responseTimeMs
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      totalCount
+    }
+  }
+}
+```
+
+#### Mutation Example
+
+```graphql
+mutation BlockMaliciousIP {
+  blockIP(
+    ip: "203.0.113.42"
+    duration: "24h"
+    reason: "C2 server detected"
+  ) {
+    success
+    message
+    blockId
+    expiresAt
+  }
+}
+```
+
+#### Subscription Example
+
+```graphql
+subscription MonitorCriticalThreats {
+  threatDetected(severity: [CRITICAL]) {
+    id
+    ipAddress
+    threatScore
+    threatLevel
+    detectedAt
+    automatedResponse {
+      actionsTaken
+    }
+  }
+}
+```
+
+---
+
+## Blockchain API
+
+### Wallet Security
+
+#### Scan Wallet Address
+
+```http
+POST /blockchain/wallet/scan
+```
+
+**Request Body:**
+```json
+{
+  "chain": "ethereum",
+  "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb4",
+  "deep_scan": true
+}
+```
+
+**Response:**
+```json
+{
+  "risk_score": 85,
+  "risk_level": "HIGH",
+  "flags": [
+    "KNOWN_SCAMMER",
+    "MIXER_INTERACTION",
+    "SUSPICIOUS_PATTERNS"
+  ],
+  "analysis": {
+    "transaction_count": 1847,
+    "first_seen": "2024-03-15T10:00:00Z",
+    "last_activity": "2025-01-15T14:00:00Z",
+    "mixer_interactions": 12,
+    "scam_associations": 3,
+    "high_risk_interactions": [
+      {
+        "address": "0x123...",
+        "type": "KNOWN_SCAMMER",
+        "interaction_count": 5
+      }
+    ]
+  }
+}
+```
+
+### Smart Contract Analysis
+
+#### Analyze Smart Contract
+
+```http
+POST /blockchain/contract/analyze
+```
+
+**Request Body:**
+```json
+{
+  "chain": "ethereum",
+  "address": "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
+  "check_vulnerabilities": true,
+  "check_rug_pull": true,
+  "simulate_transaction": {
+    "function": "swap",
+    "params": ["1000000000000000000", "0x..."],
+    "value": "0"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "contract_safety_score": 72,
+  "vulnerabilities": [
+    {
+      "type": "REENTRANCY",
+      "severity": "HIGH",
+      "function": "withdraw()",
+      "line": 142
+    }
+  ],
+  "rug_pull_risk": {
+    "score": 35,
+    "risk_level": "MEDIUM",
+    "indicators": [
+      "OWNERSHIP_NOT_RENOUNCED",
+      "MINT_FUNCTION_PRESENT",
+      "PAUSABLE_CONTRACT"
+    ]
+  },
+  "simulation_result": {
+    "success": true,
+    "gas_used": 145000,
+    "state_changes": [...],
+    "warnings": [
+      "Unusually high slippage detected"
+    ]
+  }
+}
+```
+
+### DeFi Monitoring
+
+#### Monitor Liquidity Pool
+
+```http
+POST /blockchain/defi/monitor
+```
+
+**Request Body:**
+```json
+{
+  "chain": "ethereum",
+  "protocol": "uniswap_v3",
+  "pool_address": "0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8",
+  "alerts": {
+    "large_swaps": true,
+    "liquidity_changes": true,
+    "price_impact": 5.0
+  }
+}
+```
+
+### NFT Security
+
+#### Verify NFT
+
+```http
+POST /blockchain/nft/verify
+```
+
+**Request Body:**
+```json
+{
+  "chain": "ethereum",
+  "contract": "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+  "token_id": "1234",
+  "check_metadata": true,
+  "verify_ownership": true
+}
+```
+
+---
+
+## Webhooks
+
+### Webhook Configuration
+
+```http
+POST /webhooks
+```
+
+**Request Body:**
+```json
+{
+  "url": "https://your-server.com/webhook",
+  "events": [
+    "threat.critical",
+    "threat.high",
+    "crypto.high_risk_transaction",
+    "system.emergency"
+  ],
+  "secret": "your_webhook_secret",
+  "retry_policy": {
+    "max_attempts": 3,
+    "backoff_multiplier": 2
+  }
+}
+```
+
+### Webhook Payload
+
+```json
+{
+  "event": "threat.critical",
+  "timestamp": "2025-01-15T14:30:00Z",
+  "data": {
+    "threat_id": "threat_7h8i9j0k",
+    "ip_address": "203.0.113.42",
+    "threat_score": 92,
+    "threat_level": "CRITICAL",
+    "automated_response": {
+      "actions_taken": ["BLOCK_IP", "QUARANTINE_PROCESS"]
+    }
+  },
+  "signature": "sha256=7d38cdd689735b008b3c702edd92eea23791c5f6c4036a3df5f29e89e1b2a6f8"
+}
+```
+
+### Webhook Signature Verification
+
+```python
+import hmac
+import hashlib
+
+def verify_webhook(payload, signature, secret):
+    expected = hmac.new(
+        secret.encode(),
+        payload.encode(),
+        hashlib.sha256
+    ).hexdigest()
+    
+    return hmac.compare_digest(
+        f"sha256={expected}",
+        signature
+    )
+```
+
+---
+
+## SDKs & Libraries
+
+### Official SDKs
+
+#### Python SDK
+
+```python
+from cyberfortress import CyberFortressClient
+
+client = CyberFortressClient(
+    api_key="YOUR_API_KEY",
+    environment="production"
+)
+
+# Get threats
+threats = client.threats.list(
+    severity=["high", "critical"],
+    limit=50
+)
+
+# Real-time monitoring
+@client.on("threat_detected")
+def handle_threat(threat):
+    if threat.severity == "CRITICAL":
+        client.network.block_ip(
+            threat.ip_address,
+            duration="24h"
+        )
+
+# Start monitoring
+client.monitoring.set_mode("ENTERPRISE")
+client.start_realtime()
+```
+
+#### Node.js SDK
+
+```javascript
+const CyberFortress = require('@cyberfortress/sdk');
+
+const client = new CyberFortress({
+  apiKey: 'YOUR_API_KEY',
+  environment: 'production'
+});
+
+// Async/await pattern
+async function monitorThreats() {
+  const threats = await client.threats.list({
+    severity: ['high', 'critical'],
+    limit: 50
+  });
+  
+  for (const threat of threats.data) {
+    if (threat.threatScore > 80) {
+      await client.network.blockIP({
+        ip: threat.ipAddress,
+        duration: '24h'
+      });
+    }
+  }
+}
+
+// WebSocket streaming
+client.stream.on('threat_detected', (threat) => {
+  console.log('New threat:', threat);
+});
+
+client.stream.connect();
+```
+
+#### Go SDK
+
+```go
+package main
+
+import (
+    "github.com/cyberfortress/go-sdk"
+)
+
+func main() {
+    client := cyberfortress.NewClient(
+        cyberfortress.WithAPIKey("YOUR_API_KEY"),
+        cyberfortress.WithEnvironment("production"),
+    )
+    
+    // List threats
+    threats, err := client.Threats.List(&cyberfortress.ThreatListOptions{
+        Severity: []string{"high", "critical"},
+        Limit:    50,
+    })
+    
+    if err != nil {
+        panic(err)
+    }
+    
+    // Block IP
+    for _, threat := range threats.Data {
+        if threat.ThreatScore > 80 {
+            _, err := client.Network.BlockIP(&cyberfortress.BlockIPRequest{
+                IP:       threat.IPAddress,
+                Duration: "24h",
+                Reason:   "High threat score",
+            })
+        }
+    }
+}
+```
+
+#### Java SDK
+
+```java
+import io.cyberfortress.CyberFortressClient;
+import io.cyberfortress.models.*;
+
+public class Example {
+    public static void main(String[] args) {
+        CyberFortressClient client = CyberFortressClient.builder()
+            .apiKey("YOUR_API_KEY")
+            .environment(Environment.PRODUCTION)
+            .build();
+        
+        // List threats
+        ThreatList threats = client.threats().list(
+            ThreatListRequest.builder()
+                .severity(Arrays.asList("high", "critical"))
+                .limit(50)
+                .build()
+        );
+        
+        // Process threats
+        threats.getData().stream()
+            .filter(t -> t.getThreatScore() > 80)
+            .forEach(threat -> {
+                client.network().blockIP(
+                    BlockIPRequest.builder()
+                        .ip(threat.getIpAddress())
+                        .duration("24h")
+                        .build()
+                );
+            });
+    }
+}
+```
+
+---
+
+## Rate Limiting
+
+### Rate Limits
+
+| Plan | Requests/Second | Requests/Hour | Burst Limit |
+|------|----------------|---------------|-------------|
+| Personal | 10 | 10,000 | 50 |
+| Professional | 50 | 50,000 | 200 |
+| Enterprise | 200 | 200,000 | 1000 |
+| Custom | Unlimited | Unlimited | Unlimited |
+
+### Rate Limit Headers
+
+```http
+X-RateLimit-Limit: 50
+X-RateLimit-Remaining: 47
+X-RateLimit-Reset: 1642339200
+X-RateLimit-Burst-Limit: 200
+X-RateLimit-Burst-Remaining: 197
+```
+
+### Rate Limit Response
+
+```http
+HTTP/1.1 429 Too Many Requests
+
+{
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "API rate limit exceeded",
+    "retry_after": 60,
+    "limit": 50,
+    "reset_at": "2025-01-15T15:00:00Z"
+  }
+}
+```
+
+---
+
+## Error Handling
+
+### Error Response Format
+
+```json
+{
+  "error": {
+    "code": "INVALID_REQUEST",
+    "message": "The request parameters are invalid",
+    "details": [
+      {
+        "field": "ip_address",
+        "issue": "Invalid IP address format"
+      }
+    ],
+    "request_id": "req_a1b2c3d4e5f6",
+    "documentation": "https://docs.cyberfortress.io/errors/INVALID_REQUEST"
+  }
+}
+```
+
+### Common Error Codes
+
+| Code | HTTP Status | Description |
+|------|-------------|-------------|
+| `UNAUTHORIZED` | 401 | Invalid or missing API key |
+| `FORBIDDEN` | 403 | Insufficient permissions |
+| `NOT_FOUND` | 404 | Resource not found |
+| `INVALID_REQUEST` | 400 | Invalid request parameters |
+| `RATE_LIMIT_EXCEEDED` | 429 | Too many requests |
+| `INTERNAL_ERROR` | 500 | Internal server error |
+| `SERVICE_UNAVAILABLE` | 503 | Service temporarily unavailable |
+| `TIMEOUT` | 504 | Request timeout |
+
+### Error Handling Best Practices
+
+```python
+import time
+from cyberfortress import CyberFortressClient, RateLimitError
+
+client = CyberFortressClient(api_key="YOUR_API_KEY")
+
+def with_retry(func, max_retries=3):
+    for attempt in range(max_retries):
+        try:
+            return func()
+        except RateLimitError as e:
+            if attempt == max_retries - 1:
+                raise
+            time.sleep(e.retry_after)
+        except Exception as e:
+            if attempt == max_retries - 1:
+                raise
+            time.sleep(2 ** attempt)  # Exponential backoff
+
+# Usage
+threats = with_retry(lambda: client.threats.list())
+```
+
+---
+
+## Integration Examples
+
+### SIEM Integration
+
+#### Splunk Integration
+
+```python
+# Splunk HTTP Event Collector integration
+import requests
+import json
+from cyberfortress import CyberFortressClient
+
+cf_client = CyberFortressClient(api_key="CF_API_KEY")
+splunk_url = "https://splunk.example.com:8088/services/collector"
+splunk_token = "SPLUNK_HEC_TOKEN"
+
+def send_to_splunk(threat):
+    event = {
+        "event": {
+            "threat_id": threat.id,
+            "ip": threat.ip_address,
+            "score": threat.threat_score,
+            "level": threat.threat_level,
+            "timestamp": threat.detected_at
+        },
+        "sourcetype": "cyberfortress:threat",
+        "source": "cyberfortress_api"
+    }
+    
+    response = requests.post(
+        splunk_url,
+        headers={
+            "Authorization": f"Splunk {splunk_token}",
+            "Content-Type": "application/json"
+        },
+        data=json.dumps(event)
+    )
+    
+    return response.status_code == 200
+
+# Stream threats to Splunk
+@cf_client.on("threat_detected")
+def handle_threat(threat):
+    send_to_splunk(threat)
+
+cf_client.start_realtime()
+```
+
+#### Elastic/ELK Integration
+
+```javascript
+const { Client } = require('@elastic/elasticsearch');
+const CyberFortress = require('@cyberfortress/sdk');
+
+const elastic = new Client({ 
+  node: 'http://localhost:9200' 
+});
+
+const cf = new CyberFortress({
+  apiKey: 'YOUR_API_KEY'
+});
+
+// Index threats in Elasticsearch
+cf.stream.on('threat_detected', async (threat) => {
+  await elastic.index({
+    index: 'cyberfortress-threats',
+    body: {
+      '@timestamp': threat.detected_at,
+      threat_id: threat.id,
+      ip_address: threat.ip_address,
+      threat_score: threat.threat_score,
+      threat_level: threat.threat_level,
+      geo: {
+        country: threat.country.code,
+        city: threat.country.city
+      },
+      ml_analysis: threat.ml_analysis,
+      automated_response: threat.automated_response
+    }
+  });
+});
+```
+
+### Incident Response Integration
+
+#### PagerDuty Integration
+
+```python
+from pdpyras import APISession
+from cyberfortress import CyberFortressClient
+
+cf = CyberFortressClient(api_key="CF_API_KEY")
+pd = APISession("PAGERDUTY_API_KEY")
+
+@cf.on("critical_alert")
+def handle_critical(alert):
+    # Create PagerDuty incident
+    incident = pd.post("/incidents", json={
+        "incident": {
+            "type": "incident",
+            "title": f"Critical Threat: {alert.ip_address}",
+            "service": {
+                "id": "SERVICE_ID",
+                "type": "service_reference"
+            },
+            "urgency": "high",
+            "body": {
+                "type": "incident_body",
+                "details": f"""
+                Threat Score: {alert.threat_score}
+                Level: {alert.threat_level}
+                Actions Taken: {alert.automated_response}
+                """
+            }
+        }
+    })
+```
+
+### Firewall Integration
+
+#### pfSense Integration
+
+```python
+import paramiko
+from cyberfortress import CyberFortressClient
+
+cf = CyberFortressClient(api_key="YOUR_API_KEY")
+
+def block_ip_pfsense(ip_address, reason):
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect('pfsense.local', username='admin', password='password')
+    
+    # Add to pfBlockerNG
+    commands = [
+        f'echo "{ip_address}" >> /var/db/pfblockerng/cyberfortress.txt',
+        'pfctl -t pfBlockerNG -T add {ip_address}',
+        f'logger "CyberFortress blocked {ip_address}: {reason}"'
+    ]
+    
+    for cmd in commands:
+        stdin, stdout, stderr = ssh.exec_command(cmd)
+        stdout.read()
+    
+    ssh.close()
+
+@cf.on("threat_detected")
+def auto_block(threat):
+    if threat.threat_score > 80:
+        block_ip_pfsense(threat.ip_address, threat.threat_level)
+```
+
+### Cloud Integration
+
+#### AWS Security Hub
+
+```python
+import boto3
+from cyberfortress import CyberFortressClient
+
+cf = CyberFortressClient(api_key="YOUR_API_KEY")
+securityhub = boto3.client('securityhub')
+
+@cf.on("threat_detected")
+def send_to_security_hub(threat):
+    finding = {
+        "SchemaVersion": "2018-10-08",
+        "Id": threat.id,
+        "ProductArn": "arn:aws:securityhub:us-east-1:123456789012:product/cyberfortress/cyberfortress",
+        "GeneratorId": "cyberfortress-threat-detector",
+        "AwsAccountId": "123456789012",
+        "Types": ["Sensitive Data Identifications/PII"],
+        "CreatedAt": threat.detected_at,
+        "UpdatedAt": threat.detected_at,
+        "Severity": {
+            "Normalized": min(threat.threat_score, 100),
+            "Label": threat.threat_level
+        },
+        "Title": f"CyberFortress Threat Detection",
+        "Description": f"Threat detected from IP {threat.ip_address}",
+        "Resources": [
+            {
+                "Type": "AwsEc2Instance",
+                "Id": "arn:aws:ec2:us-east-1:123456789012:instance/i-1234567890abcdef0",
+                "Details": {
+                    "AwsEc2Instance": {
+                        "IpV4Addresses": [threat.ip_address]
+                    }
+                }
+            }
+        ]
+    }
+    
+    securityhub.batch_import_findings(Findings=[finding])
+```
+
+---
+
+## Best Practices
+
+### 1. Authentication & Security
+
+- **Never expose API keys in client-side code**
+- **Use environment variables for sensitive data**
+- **Rotate API keys regularly**
+- **Implement IP whitelisting for production**
+- **Use OAuth 2.0 for user-facing applications**
+
+### 2. Performance Optimization
+
+```python
+# Use connection pooling
+import aiohttp
+import asyncio
+
+class OptimizedClient:
+    def __init__(self):
+        self.session = None
+    
+    async def __aenter__(self):
+        self.session = aiohttp.ClientSession()
+        return self
+    
+    async def __aexit__(self, *args):
+        await self.session.close()
+    
+    async def batch_check_ips(self, ips):
+        tasks = []
+        for ip in ips:
+            task = self.session.get(
+                f"https://api.cyberfortress.io/v1/threats/check/{ip}"
+            )
+            tasks.append(task)
+        
+        return await asyncio.gather(*tasks)
+
+# Usage
+async with OptimizedClient() as client:
+    results = await client.batch_check_ips(ip_list)
+```
+
+### 3. Error Handling
+
+```javascript
+// Implement comprehensive error handling
+class CyberFortressService {
+  async checkThreat(ip) {
+    try {
+      const response = await this.client.threats.check(ip);
+      return response;
+    } catch (error) {
+      if (error.code === 'RATE_LIMIT_EXCEEDED') {
+        await this.handleRateLimit(error);
+        return this.checkThreat(ip); // Retry
+      } else if (error.code === 'NETWORK_ERROR') {
+        await this.handleNetworkError(error);
+      } else {
+        this.logger.error('Unexpected error:', error);
+        throw error;
+      }
+    }
+  }
+  
+  async handleRateLimit(error) {
+    const retryAfter = error.retry_after || 60;
+    this.logger.warn(`Rate limited. Waiting ${retryAfter}s`);
+    await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+  }
+}
+```
+
+### 4. Monitoring & Logging
+
+```python
+import logging
+from datetime import datetime
+
+# Set up structured logging
+logger = logging.getLogger('cyberfortress')
+
+class APIMonitor:
+    def __init__(self, client):
+        self.client = client
+        self.metrics = {
+            'api_calls': 0,
+            'errors': 0,
+            'rate_limits': 0
+        }
+    
+    def log_api_call(self, endpoint, response_time):
+        self.metrics['api_calls'] += 1
+        logger.info({
+            'event': 'api_call',
+            'endpoint': endpoint,
+            'response_time_ms': response_time,
+            'timestamp': datetime.utcnow().isoformat()
+        })
+    
+    def get_metrics(self):
+        return {
+            **self.metrics,
+            'success_rate': (
+                (self.metrics['api_calls'] - self.metrics['errors']) 
+                / self.metrics['api_calls'] * 100
+                if self.metrics['api_calls'] > 0 else 0
+            )
+        }
+```
+
+### 5. Webhook Security
+
+```python
+# Verify webhook signatures
+import hmac
+import hashlib
+from flask import Flask, request, abort
+
+app = Flask(__name__)
+WEBHOOK_SECRET = "your_webhook_secret"
+
+@app.route('/webhook', methods=['POST'])
+def handle_webhook():
+    # Verify signature
+    signature = request.headers.get('X-CyberFortress-Signature')
+    if not signature:
+        abort(401)
+    
+    payload = request.get_data()
+    expected = hmac.new(
+        WEBHOOK_SECRET.encode(),
+        payload,
+        hashlib.sha256
+    ).hexdigest()
+    
+    if not hmac.compare_digest(f"sha256={expected}", signature):
+        abort(401)
+    
+    # Process webhook
+    data = request.json
+    process_threat(data)
+    
+    return '', 200
+```
+
+---
+
+## API Changelog
+
+### Version 1.0.0 (Current)
+- Initial API release
+- REST, WebSocket, and GraphQL endpoints
+- Blockchain security APIs
+- Webhook support
+- Official SDKs for Python, Node.js, Go, Java
+
+### Upcoming Features (v1.1.0)
+- Batch operations for threat analysis
+- Advanced ML model customization
+- Compliance reporting APIs (SOC2, HIPAA)
+- Multi-tenant support
+- API usage analytics dashboard
+
+---
+
+## Support
+
+### Resources
+
+- **API Status**: https://status.cyberfortress.io
+- **Developer Portal**: https://developers.cyberfortress.io
+- **API Playground**: https://playground.cyberfortress.io
+- **Community Forum**: https://community.cyberfortress.io
+- **GitHub**: https://github.com/cyberfortress
+
+### Contact
+
+- **Technical Support**: api-support@cyberfortress.io
+- **Sales**: sales@cyberfortress.io
+- **Security Issues**: security@cyberfortress.io
+- **Enterprise Support**: Available 24/7 for Enterprise customers
+
+### SLA
+
+| Plan | Uptime SLA | Support Response |
+|------|------------|------------------|
+| Personal | 99.5% | 48 hours |
+| Professional | 99.9% | 24 hours |
+| Enterprise | 99.95% | 1 hour |
+| Custom | 99.99% | 15 minutes |
+
+---
+
+## Legal
+
+### Terms of Service
+By using the CyberFortress API, you agree to our [Terms of Service](https://cyberfortress.io/terms).
+
+### Privacy Policy
+Data handling practices are outlined in our [Privacy Policy](https://cyberfortress.io/privacy).
+
+### Compliance
+- GDPR Compliant
+- SOC 2 Type II Certified
+- HIPAA Compliant (Enterprise)
+- ISO 27001 Certified
+
+---
+
+*Last Updated: January 2025*
+*API Version: 1.0.0*
